@@ -71,12 +71,14 @@ The registry is in [`data/sources.seed.json`](data/sources.seed.json) and loaded
 
 ## Team
 
+![The Bid Analytics team](docs/team/team-slide.png)
+
 | Who | Role |
 |---|---|
 | Jon Cochran | Client and domain expert: government contracting, business plan |
 | Ashwin Subramanian | Product spec and the map explorer app |
 | Dhruv Kurpad | Backend and integration: repo setup, wiring the map to Supabase |
-| Colin C. | Bid data: the 1,400+ source registry, bid data model, bid puller, product requirements |
+| Colin Carrihill | Bid data: the 1,400+ source registry, bid data model, bid puller, product requirements |
 
 ## For developers
 
