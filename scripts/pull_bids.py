@@ -151,12 +151,57 @@ def pull_civicplus(source):
         if re.search(r"\baward|bid results|bid tab", title, re.I) and not (closes and parse_date(closes.group(1))):
             continue
         number = re.search(r"Bid (?:No\.?|Number|#):?\s*([\w\-./]*\d[\w\-./]*)", text, re.I)
+        try:
+            contact = civicplus_contact(href)
+        except Exception:  # the listing row is still worth keeping
+            contact = {}
         rows.append(base_row(source, title, href,
                              deadline=parse_date(closes.group(1)) if closes else None,
                              solicitation_number=number.group(1) if number else None,
+                             contact_name=contact.get("name"),
+                             contact_email=contact.get("email"),
+                             contact_phone=contact.get("phone"),
                              extraction_method="html",
-                             raw={"listing_url": url, "text": text[:1000]}))
+                             raw={"listing_url": url, "text": text[:1000], "contact": contact or None}))
     return rows
+
+
+EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+PHONE_RE = re.compile(r"\(?\d{3}\)?[\s.-]*\d{3}[\s.-]*\d{4}(?:\s*(?:x|ext\.?)\s*\d+)?", re.I)
+
+
+def cf_decode(hexstr):
+    """Undo Cloudflare's email obfuscation (data-cfemail)."""
+    key = int(hexstr[:2], 16)
+    return "".join(chr(int(hexstr[i:i + 2], 16) ^ key) for i in range(2, len(hexstr), 2))
+
+
+def civicplus_contact(url):
+    """The 'Contact Person:' block on a Bids.aspx detail page: name, title, email, phone."""
+    soup = BeautifulSoup(get(url), "html.parser")
+    for el in soup.select("[data-cfemail]"):
+        el.replace_with(cf_decode(el["data-cfemail"]))
+    lines = soup.get_text("\n", strip=True).split("\n")
+    try:
+        start = next(i for i, l in enumerate(lines) if l.lower().startswith("contact person"))
+    except StopIteration:
+        return {}
+    block = []
+    for l in lines[start + 1:start + 12]:
+        # The block ends at the next field label ("Download Available:", "Related Documents:", ...).
+        if l.endswith(":") and not re.match(r"(email|e-mail|tel|phone)\b", l, re.I):
+            break
+        block.append(l)
+    text = " ".join(block)
+    email = EMAIL_RE.search(text)
+    phone = PHONE_RE.search(text)
+    names = [l for l in block if not re.search(r"@|\d{3}|^(email|tel|phone|fax)\b", l, re.I)]
+    return {k: v for k, v in {
+        "name": names[0] if names else None,
+        "title": names[1] if len(names) > 1 else None,
+        "email": email.group(0) if email else None,
+        "phone": phone.group(0) if phone else None,
+    }.items() if v}
 
 
 # --- OpenGov Procurement -----------------------------------------------------------
@@ -164,6 +209,19 @@ def pull_civicplus(source):
 def opengov_code(source):
     m = re.search(r"procurement\.opengov\.com/portal/(?:embed/)?([\w-]+)", source.get("procurement_url") or "")
     return m.group(1) if m else None
+
+
+def opengov_contact(d):
+    """Named project contact, falling back to the procurement officer."""
+    for pre in ("contact", "procurement"):
+        if d.get(f"{pre}Email") or d.get(f"{pre}FullName"):
+            addr = ", ".join(x for x in [d.get(f"{pre}Address1"), d.get(f"{pre}Address2"), d.get(f"{pre}City"),
+                                         " ".join(x for x in [d.get(f"{pre}State"), d.get(f"{pre}ZipCode")] if x)] if x)
+            return {k: v for k, v in {
+                "name": d.get(f"{pre}FullName"), "title": d.get(f"{pre}Title"),
+                "email": d.get(f"{pre}Email"), "phone": d.get(f"{pre}PhoneComplete") or d.get(f"{pre}Phone"),
+                "address": addr or None}.items() if v}
+    return {}
 
 
 def pull_opengov(source):
@@ -187,13 +245,24 @@ def pull_opengov(source):
         if deadline and datetime.fromisoformat(deadline.replace("Z", "+00:00")) <= now:
             continue
         summary = BeautifulSoup(p.get("summary") or "", "html.parser").get_text(" ", strip=True)
+        try:
+            detail = requests.get(f"https://api.procurement.opengov.com/api/v1/project/{p['id']}",
+                                  headers={"User-Agent": UA}, timeout=TIMEOUT).json()
+        except Exception:
+            detail = {}
+        contact = opengov_contact(detail)
         rows.append(base_row(source, p["title"], f"https://procurement.opengov.com/portal/{code}/projects/{p['id']}",
                              solicitation_number=p.get("financialId"),
                              description=summary[:4000] or None,
                              deadline=deadline,
                              posted_date=(p.get("releaseProjectDate") or "")[:10] or None,
+                             questions_due_at=detail.get("qaDeadline"),
+                             prebid_at=detail.get("preProposalDate"),
+                             contact_name=contact.get("name"),
+                             contact_email=contact.get("email"),
+                             contact_phone=contact.get("phone"),
                              extraction_method="api",
-                             raw={"listing_url": api, "id": p["id"],
+                             raw={"listing_url": api, "id": p["id"], "contact": contact or None,
                                   "department": (p.get("department") or {}).get("name"),
                                   "template": (p.get("template") or {}).get("title")}))
     return rows
