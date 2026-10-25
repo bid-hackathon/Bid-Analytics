@@ -4,6 +4,7 @@ Adapters (pick with --platform, default: all):
   civicplus   CivicPlus "Bids.aspx" pages. One extractor covers many small WA/OR/ID cities.
   opengov     OpenGov Procurement portals (procurement.opengov.com/portal/<code>), e.g. Pierce County.
   oregonbuys  OregonBuys open-bid search (statewide OR, plus local agencies that post there).
+  oracle      Oracle Fusion "Solicitation Abstracts" pages (NegotiationAbstracts), e.g. King County.
 
 Sources come from data/sources.seed.json plus data/agencies/*.json, chosen by `platform`
 (civicplus also matches any procurement_url containing "Bids.aspx").
@@ -335,7 +336,80 @@ def pull_oregonbuys(source, max_pages=10):
     return rows
 
 
-ADAPTERS = {"civicplus": pull_civicplus, "opengov": pull_opengov, "oregonbuys": pull_oregonbuys}
+# --- Oracle Fusion Solicitation Abstracts ------------------------------------------
+
+CHROMIUM = os.environ.get("CHROMIUM_PATH")  # e.g. a preinstalled headless shell
+ORACLE_TYPES = {"Construction Solicitation": ["construction"], "A&E Solicitation": ["consulting"]}
+
+
+def oracle_rows(html):
+    """Table rows: number[,amendment], title, type, status, posted, opens, closes."""
+    out = {}
+    for tr in BeautifulSoup(html, "html.parser").find_all("tr"):
+        cells = [c for c in (td.get_text(" ", strip=True) for td in tr.find_all("td", recursive=False)) if c]
+        if len(cells) >= 7 and re.fullmatch(r"[A-Z]{2,}\d+(,\d+)?", cells[0]):
+            out[cells[0]] = cells[:7]
+    return out
+
+
+def pull_oracle(source, max_scrolls=15):
+    """An ADF page that loads rows as the table scrolls. Rows are newest first, so stop
+    once a few scrolls add nothing. Detail pages need a session, so bids link to the list."""
+    url = source.get("procurement_url") or ""
+    if "NegotiationAbstracts" not in url:
+        return []
+    from playwright.sync_api import sync_playwright
+    seen, stall = {}, 0
+    with sync_playwright() as p:
+        browser = p.chromium.launch(executable_path=CHROMIUM) if CHROMIUM else p.chromium.launch()
+        page = browser.new_page(viewport={"width": 1400, "height": 3000})
+        page.goto(url, wait_until="domcontentloaded", timeout=90000)
+        page.wait_for_timeout(12000)
+        for _ in range(max_scrolls):
+            before = len(seen)
+            seen.update(oracle_rows(page.content()))
+            stall = stall + 1 if len(seen) == before else 0
+            if stall >= 3:
+                break
+            page.evaluate("() => document.querySelectorAll('div').forEach(d => {"
+                          " if (d.scrollHeight > d.clientHeight + 20) d.scrollTop = d.scrollHeight; })")
+            page.wait_for_timeout(2000)
+        browser.close()
+    # Amendments repeat a solicitation as "KC001711,2"; keep the latest active one.
+    latest = {}
+    for num, title, kind, status, posted, _opens, closes in seen.values():
+        base, _, amend = num.partition(",")
+        if status != "Active":
+            continue
+        if base not in latest or int(amend or 0) > latest[base][0]:
+            latest[base] = (int(amend or 0), title, kind, posted, closes)
+    now = datetime.now(timezone.utc)
+    rows = []
+    for base, (_amend, title, kind, posted, closes) in latest.items():
+        deadline = oracle_date(closes)
+        if deadline and datetime.fromisoformat(deadline) <= now:
+            continue
+        row = base_row(source, title, f"{url}&solicitation={base}",
+                       solicitation_number=base, deadline=deadline,
+                       posted_date=(oracle_date(posted) or "")[:10] or None,
+                       extraction_method="html",
+                       raw={"listing_url": url, "solicitation_type": kind})
+        row["categories"] = sorted(set(row["categories"]) | set(ORACLE_TYPES.get(kind, [])))
+        rows.append(row)
+    return rows
+
+
+def oracle_date(text):
+    """'10/29/26 01:30:59 PM' (Pacific) -> ISO."""
+    try:
+        d = datetime.strptime(text.strip(), "%m/%d/%y %I:%M:%S %p")
+    except (ValueError, AttributeError):
+        return None
+    return d.replace(tzinfo=PACIFIC).isoformat()
+
+
+ADAPTERS = {"civicplus": pull_civicplus, "opengov": pull_opengov, "oregonbuys": pull_oregonbuys,
+            "oracle": pull_oracle}
 
 
 def load_sources():
@@ -361,6 +435,8 @@ def adapter_for(source):
     url = (source.get("procurement_url") or "").lower()
     if plat == "oregonbuys":
         return "oregonbuys"
+    if plat == "oracle" or "negotiationabstracts" in url:
+        return "oracle"
     if plat == "opengov" or "procurement.opengov.com" in url:
         return "opengov"
     if plat == "civicplus" or "bids.aspx" in url:
