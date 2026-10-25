@@ -4,6 +4,7 @@ Start with the [project README](../README.md) for what Bid Analytics does and ho
 
 | Doc | What's in it | Lane |
 |---|---|---|
+| [`system-design.md`](system-design.md) | System design diagram (Mermaid): components, data flow, what's live vs sample vs planned | All |
 | [`FRONTEND.md`](FRONTEND.md) | Running, testing and building the map explorer; code layout; the `/api/v1` routes it expects | Product and front end |
 | [`supabase-frontend-integration.md`](supabase-frontend-integration.md) | Field-by-field mapping from the Supabase tables to the app's types | Data integration |
 | [`bid-data-model.md`](bid-data-model.md) | The `sources`, `bids` and `leads` tables and every bid field | Bid finding |
