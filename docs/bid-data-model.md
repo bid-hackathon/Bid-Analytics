@@ -27,7 +27,7 @@ in `supabase/migrations/` and a PR, after the team agrees.
 | `summary` | text | 1-2 plain-language sentences for the detail view. |
 | `description` | text | Fuller text as extracted. |
 | `categories` | text[] | Plain work types matching the intake chips (`paving`, `landscaping`, `janitorial`, `snow_removal`, ...). |
-| `naics_codes` | text[] | 6-digit codes, when the bid lists or implies them. |
+| `naics_codes` | text[] | NAICS codes the agency tagged, most specific only (2-6 digits; OpenGov tags some bids only at the sector level). Titles in `raw.naics`. |
 | `requirements` | text[] | `licensed`, `bonded`, `insured`, `prevailing_wage`, `small_works_roster`, ... |
 | `set_asides` | text[] | `small_business`, `women_owned`, `minority_owned`, `veteran_owned`, `dbe`. |
 | `state`, `county`, `city` | text | Where the work happens. `state` is WA, OR or ID. |
@@ -37,6 +37,7 @@ in `supabase/migrations/` and a PR, after the team agrees.
 | `deadline` | timestamptz | Response due. |
 | `prebid_at`, `questions_due_at` | timestamptz | Optional. |
 | `contact_name`, `contact_email`, `contact_phone` | text | The contact named in the bid. |
+| `contact_title`, `contact_address` | text | That contact's job title and mailing address, when listed. |
 | `estimated_value_text` | text | Only as published by the agency. We never estimate prices. |
 | `source_url` | text | Link to the bid. Unique; upsert key. |
 | `documents` | jsonb | `[{"name", "url", "type"}]` for specs, plans and addenda. |

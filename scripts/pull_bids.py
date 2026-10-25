@@ -161,6 +161,7 @@ def pull_civicplus(source):
                              contact_name=contact.get("name"),
                              contact_email=contact.get("email"),
                              contact_phone=contact.get("phone"),
+                             contact_title=contact.get("title"),
                              extraction_method="html",
                              raw={"listing_url": url, "text": text[:1000], "contact": contact or None}))
     return rows
@@ -224,6 +225,19 @@ def opengov_contact(d):
     return {}
 
 
+OPENGOV_NAICS_SET, OPENGOV_NIGP_SET = 200, 100
+
+
+def opengov_codes(d):
+    """Project categories -> (NAICS, NIGP) lists of (code, title). For NAICS, keep only the
+    most specific codes: '517' is dropped when '5173' is also listed."""
+    cats = d.get("categories") or []
+    naics = {c["code"]: c["title"] for c in cats if c.get("setId") == OPENGOV_NAICS_SET}
+    leaves = [(c, t) for c, t in sorted(naics.items()) if not any(o != c and o.startswith(c) for o in naics)]
+    nigp = [(c["code"], c["title"]) for c in cats if c.get("setId") == OPENGOV_NIGP_SET]
+    return leaves, nigp
+
+
 def pull_opengov(source):
     """The portal page sits behind a Cloudflare check, but its JSON API answers plain requests."""
     code = opengov_code(source)
@@ -251,6 +265,7 @@ def pull_opengov(source):
         except Exception:
             detail = {}
         contact = opengov_contact(detail)
+        naics, nigp = opengov_codes(detail)
         rows.append(base_row(source, p["title"], f"https://procurement.opengov.com/portal/{code}/projects/{p['id']}",
                              solicitation_number=p.get("financialId"),
                              description=summary[:4000] or None,
@@ -261,8 +276,13 @@ def pull_opengov(source):
                              contact_name=contact.get("name"),
                              contact_email=contact.get("email"),
                              contact_phone=contact.get("phone"),
+                             contact_title=contact.get("title"),
+                             contact_address=contact.get("address"),
+                             naics_codes=[c for c, _ in naics] or None,
                              extraction_method="api",
                              raw={"listing_url": api, "id": p["id"], "contact": contact or None,
+                                  "naics": [{"code": c, "title": t} for c, t in naics] or None,
+                                  "nigp": [{"code": c, "title": t} for c, t in nigp] or None,
                                   "department": (p.get("department") or {}).get("name"),
                                   "template": (p.get("template") or {}).get("title")}))
     return rows
