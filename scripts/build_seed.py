@@ -44,6 +44,14 @@ FIXES = {
     },
 }
 
+# Cities in the accuracy-test counties, used to tag WA rows that have a city but no county.
+TEST_COUNTY_CITIES = {
+    "King": "Seattle Bellevue Kent Renton Federal-Way Kirkland Auburn Redmond Sammamish Burien Shoreline Issaquah Des-Moines SeaTac Kenmore Tukwila Maple-Valley Covington Mercer-Island Lake-Forest-Park Newcastle Normandy-Park Snoqualmie North-Bend Enumclaw Black-Diamond Duvall Carnation Woodinville Pacific Algona Medina Clyde-Hill Yarrow-Point Hunts-Point Beaux-Arts Skykomish Vashon Bothell",
+    "Snohomish": "Everett Marysville Edmonds Lynnwood Lake-Stevens Mukilteo Mill-Creek Mountlake-Terrace Monroe Arlington Snohomish Stanwood Granite-Falls Sultan Gold-Bar Brier Woodway Darrington Index",
+    "Pierce": "Tacoma Lakewood Puyallup University-Place Bonney-Lake Gig-Harbor Fife Sumner DuPont Edgewood Fircrest Orting Steilacoom Buckley Eatonville Milton Roy Ruston Wilkeson Carbonado South-Prairie Spanaway Graham",
+}
+COUNTY_OF_CITY = {c.replace("-", " ").lower(): county for county, cities in TEST_COUNTY_CITIES.items() for c in cities.split()}
+
 PLATFORM_PATTERNS = [
     ("bidnetdirect.com", "bidnet"),
     ("bonfirehub.com", "bonfire"),
@@ -263,20 +271,20 @@ def merge_agency_files(rows):
     """Fold in data/agencies/: `*.json` lists add rows; wa_procurement_fixes.json patches by id."""
     by_id = {r["id"]: r for r in rows}
     template = source("", "", "special_district")
-    for path in sorted(AGENCIES.glob("*.json")):
-        data = json.loads(path.read_text())
-        if isinstance(data, dict):  # {"updates": [...], "new": [...]}
-            for u in data.get("updates", []):
-                if u["id"] in by_id:
-                    by_id[u["id"]].update({k: v for k, v in u.items() if k != "id"})
-                else:
-                    print(f"  {path.name}: no source {u['id']}, skipped")
-            data = data.get("new", [])
-        for r in data:
+    files = [(p.name, json.loads(p.read_text())) for p in sorted(AGENCIES.glob("*.json"))]
+    # New rows from every file first, so an update in one file can patch a row added by another.
+    for name, data in files:
+        for r in data.get("new", []) if isinstance(data, dict) else data:
             if r["id"] in by_id:
                 by_id[r["id"]].update({k: v for k, v in r.items() if v is not None})
             else:
                 by_id[r["id"]] = {**template, **r}
+    for name, data in files:
+        for u in data.get("updates", []) if isinstance(data, dict) else []:
+            if u["id"] in by_id:
+                by_id[u["id"]].update({k: v for k, v in u.items() if k != "id"})
+            else:
+                print(f"  {name}: no source {u['id']}, skipped")
     return list(by_id.values())
 
 
@@ -301,6 +309,9 @@ def main():
         r.update(state=state, platform=plat, fetch_method=method, discovered_via="manual")
         rows.append(r)
     rows = merge_agency_files(rows)
+    for r in rows:
+        if r["state"] == "WA" and not r["county"] and r["city"]:
+            r["county"] = COUNTY_OF_CITY.get(r["city"].lower())
     rows.sort(key=lambda r: r["id"])
 
     OUT_JSON.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")

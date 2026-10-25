@@ -7,3 +7,4 @@ Rows here use the `sources` shape from `supabase/migrations` and get merged by `
   - School-district and special-district lists are hand-curated. Expect a few gaps or name mismatches.
   - Almost no rows have a `procurement_url` yet (`status = "missing"`), so the discovery script should start here. Homepages marked "from memory; verify" are unchecked.
 - `wa_procurement_fixes.json`: procurement-URL fills and data fixes for existing WA rows (King, Pierce, Snohomish, Bellevue, Everett; Chelan and Yakima county homepages pointed at the cities), plus the OMWBE bid board as a new WA platform.
+- `wa_geo.json`: coordinates (and blank counties) for WA rows, built by `scripts/geocode_wa.py`. Each row is placed at its city (GeoNames, or a ZIP centroid for small towns), else a place named in the agency name, else its county's centre. 14 statewide agencies, platforms and junk rows stay off the map. `build_seed.py` applies `updates` after every file's new rows.
