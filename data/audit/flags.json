@@ -16191,6 +16191,23 @@
   ]
  },
  {
+  "id": "wa-city-auburn",
+  "name": "City of Auburn",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "King",
+  "city": "Auburn",
+  "homepage_url": "https://www.auburnwa.gov/",
+  "procurement_url": "https://www.auburnwa.gov/city_hall/documents/request_for_bids_proposals",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
   "id": "wa-city-bellevue",
   "name": "City of Bellevue",
   "state": "WA",
@@ -16243,6 +16260,23 @@
   ]
  },
  {
+  "id": "wa-city-edmonds",
+  "name": "City of Edmonds",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "Snohomish",
+  "city": "Edmonds",
+  "homepage_url": "https://www.edmondswa.gov/",
+  "procurement_url": "https://www.edmondswa.gov/doing_business/bids_rfp_s_and_rfq_s",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
   "id": "wa-city-everett",
   "name": "City of Everett",
   "state": "WA",
@@ -16255,6 +16289,23 @@
   "status": "candidate",
   "test_county": true,
   "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-city-federal-way",
+  "name": "City of Federal Way",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "King",
+  "city": "Federal Way",
+  "homepage_url": "https://www.federalwaywa.gov/",
+  "procurement_url": "https://www.federalwaywa.gov/bids",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": "Listing URL inferred from individual bid pages; confirm in audit.",
   "flags": [
    "no_coordinates"
   ]
@@ -16284,13 +16335,80 @@
   "county": "King",
   "city": "Kent",
   "homepage_url": "https://www.kentwa.gov/",
-  "procurement_url": null,
-  "platform": null,
-  "status": "missing",
+  "procurement_url": "https://www.kentwa.gov/pay-and-apply/bids-procurement-rfps",
+  "platform": "custom",
+  "status": "candidate",
   "test_county": true,
   "notes": null,
   "flags": [
-   "no_procurement_url",
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-city-kirkland",
+  "name": "City of Kirkland",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "King",
+  "city": "Kirkland",
+  "homepage_url": "https://www.kirklandwa.gov/",
+  "procurement_url": "https://www.kirklandwa.gov/Government/Departments/Finance-and-Administration/Purchasing-Services/Doing-Business-with-the-City",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": "Solicitations are posted as PDFs linked from this page.",
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-city-lakewood",
+  "name": "City of Lakewood",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "Pierce",
+  "city": "Lakewood",
+  "homepage_url": "https://cityoflakewood.us/",
+  "procurement_url": "https://cityoflakewood.us/category/rfp-rfq-bids",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-city-lynnwood",
+  "name": "City of Lynnwood",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "Snohomish",
+  "city": "Lynnwood",
+  "homepage_url": "https://www.lynnwoodwa.gov/",
+  "procurement_url": "https://www.lynnwoodwa.gov/Government/Departments/Finance/Procurement-Contracts-Division",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-city-marysville",
+  "name": "City of Marysville",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "Snohomish",
+  "city": "Marysville",
+  "homepage_url": "https://marysvillewa.gov/",
+  "procurement_url": "https://marysvillewa.gov/Bids.aspx",
+  "platform": "civicplus",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
    "no_coordinates"
   ]
  },
@@ -16382,6 +16500,57 @@
   ]
  },
  {
+  "id": "wa-city-puyallup",
+  "name": "City of Puyallup",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "Pierce",
+  "city": "Puyallup",
+  "homepage_url": "https://cityofpuyallup.org/",
+  "procurement_url": "https://cityofpuyallup.org/Bids.aspx",
+  "platform": "civicplus",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-city-redmond",
+  "name": "City of Redmond",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "King",
+  "city": "Redmond",
+  "homepage_url": "https://www.redmond.gov/",
+  "procurement_url": "https://redmond.gov/Bids.aspx?CatID=showStatus&Status=open&showAllBids=&txtSort=Date",
+  "platform": "civicplus",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-city-renton",
+  "name": "City of Renton",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "King",
+  "city": "Renton",
+  "homepage_url": "https://www.rentonwa.gov/",
+  "procurement_url": "https://www.rentonwa.gov/Projects-Development/Bids-Proposals-Qualifications-and-Other-Procurement-Solicitations",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
   "id": "wa-city-seattle",
   "name": "City of Seattle",
   "state": "WA",
@@ -16414,6 +16583,23 @@
   "flags": [
    "no_coordinates",
    "no_homepage"
+  ]
+ },
+ {
+  "id": "wa-city-shoreline",
+  "name": "City of Shoreline",
+  "state": "WA",
+  "agency_type": "city",
+  "county": "King",
+  "city": "Shoreline",
+  "homepage_url": "https://www.shorelinewa.gov/",
+  "procurement_url": "https://www.shorelinewa.gov/government/departments/administrative-services/bids-rfps",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": "Listing URL inferred from individual bid pages; confirm in audit.",
+  "flags": [
+   "no_coordinates"
   ]
  },
  {
@@ -18634,6 +18820,23 @@
   ]
  },
  {
+  "id": "wa-port-northwest-seaport-alliance",
+  "name": "Northwest Seaport Alliance",
+  "state": "WA",
+  "agency_type": "port",
+  "county": "Pierce",
+  "city": "Tacoma",
+  "homepage_url": "https://www.nwseaportalliance.com/",
+  "procurement_url": "https://www.nwseaportalliance.com/about-us/do-business-us/contracting/procurements",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": "Listing URL inferred from individual bid pages; confirm in audit.",
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
   "id": "wa-port-port-of-bellingham",
   "name": "Port of Bellingham",
   "state": "WA",
@@ -18817,6 +19020,23 @@
   "status": "candidate",
   "test_county": false,
   "notes": null,
+  "flags": [
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-port-port-of-tacoma",
+  "name": "Port of Tacoma",
+  "state": "WA",
+  "agency_type": "port",
+  "county": "Pierce",
+  "city": "Tacoma",
+  "homepage_url": "https://www.portoftacoma.com/",
+  "procurement_url": "https://www.portoftacoma.com/business/contracting/procurement",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": "Listing URL inferred from individual bid pages; confirm in audit.",
   "flags": [
    "no_coordinates"
   ]
@@ -20154,13 +20374,12 @@
   "county": "Snohomish",
   "city": "Lynnwood",
   "homepage_url": null,
-  "procurement_url": null,
-  "platform": null,
-  "status": "missing",
+  "procurement_url": "https://www.edmonds.wednet.edu/our-district/departments/business-and-finance/business-services/purchasing/bid-opportunities",
+  "platform": "custom",
+  "status": "candidate",
   "test_county": true,
   "notes": null,
   "flags": [
-   "no_procurement_url",
    "no_coordinates",
    "no_homepage"
   ]
@@ -25238,6 +25457,23 @@
   "notes": null,
   "flags": [
    "no_procurement_url",
+   "no_coordinates"
+  ]
+ },
+ {
+  "id": "wa-transit-sound-transit",
+  "name": "Sound Transit",
+  "state": "WA",
+  "agency_type": "transit",
+  "county": "King",
+  "city": "Seattle",
+  "homepage_url": "https://www.soundtransit.org/",
+  "procurement_url": "https://www.soundtransit.org/get-to-know-us/doing-business-with-us/procurement-contracts",
+  "platform": "custom",
+  "status": "candidate",
+  "test_county": true,
+  "notes": "Regional transit for King, Snohomish and Pierce.",
+  "flags": [
    "no_coordinates"
   ]
  },
