@@ -1,6 +1,6 @@
 # Source registry
 
-Places in WA, OR and ID (plus SAM.gov) that post bids. The agent searches these at runtime.
+State and local agencies in WA, OR and ID that post bids. Federal bids (SAM.gov) are out of scope. The agent searches these at runtime.
 
 - `sources.seed.json`: the registry, checked into git. Generated, then improved by discovery.
 - `../supabase/migrations/`: schema for `sources`, `bids` and `leads`, with RLS.
