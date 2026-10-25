@@ -7,7 +7,7 @@ How the explorer in `src/` can read live data from the bid-finding lane. The sch
 - Project URL: `https://jpqkpyfccgzayoyrudkb.supabase.co`
 - Key: the **publishable** (anon) key only. Put it in `.env.local` as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and never commit it. Never put the secret key in a `NEXT_PUBLIC_` variable.
 - Anon can read:
-  - `sources`: the agency registry, about 1,456 state and local agencies in WA/OR/ID (no federal).
+  - `sources`: the agency registry, 1,450+ state and local agencies in WA/OR/ID (no federal).
   - `open_bids`: a view of `bids` where `status = 'open'` and the deadline hasn't passed.
   - `open_bids_near(p_lat, p_lng, p_miles)`: an RPC that returns open bids within a radius.
 - `leads` has no anon access. Writing a lead needs a server route that uses the secret key.

@@ -4,7 +4,7 @@
 
 Bid Analytics is a free tool that shows small businesses the government jobs posted near them. Describe what your business does in plain words, and it puts matching public bids on a map of Washington, each one labeled with how well it fits you and why.
 
-> Built at the Claude Impact Lab Hackathon (Seattle AI Week, October 2026). The app runs on clearly labeled sample listings today. The source list behind it, 1,456 state and local agencies across Washington, Oregon and Idaho, is real and loaded into our database.
+> Built at the Claude Impact Lab Hackathon (Seattle AI Week, October 2026). The app runs on clearly labeled sample listings today. The source list behind it, 1,450+ state and local agencies across Washington, Oregon and Idaho, is real and loaded into our database.
 
 ## Who it's for
 
@@ -58,7 +58,7 @@ This takes a few minutes and one program.
 
 Most local work never reaches the big state portals. It's posted on a city's purchasing page, a school district's bid board or a utility's vendor portal. We built a registry of those places:
 
-- **1,456 sources**: 554 in Washington, 514 in Oregon and 388 in Idaho.
+- **1,450+ sources** across Washington, Oregon and Idaho.
 - State agencies, cities, counties, school districts, public utility districts, ports, hospitals and other local agencies. We focus on state and local work only, not federal bids.
 - Each source records its procurement page (when we know it) and which shared bid platform it uses, so one reader can cover many agencies at once.
 
