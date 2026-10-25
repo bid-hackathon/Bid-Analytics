@@ -23,6 +23,7 @@ import os
 import re
 import sys
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
@@ -32,6 +33,7 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parent.parent
 UA = "BidAnalytics/0.1 (hackathon; finds public bids for small vendors)"
 TIMEOUT = 25
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 # Plain work types matching the intake chips. Keyword match on title + description.
 CATEGORY_WORDS = {
@@ -67,7 +69,7 @@ def now_iso():
 
 
 def parse_date(text):
-    """First m/d/yyyy [h:mm AM] in text -> ISO string (Pacific offset assumed)."""
+    """First m/d/yyyy [h:mm AM] in text -> ISO string in Pacific time (DST-aware)."""
     m = DATE_RE.search(text or "")
     if not m:
         return None
@@ -75,12 +77,13 @@ def parse_date(text):
     if m.group(2):
         t = datetime.strptime(f"{m.group(2)} {m.group(3).upper()}", "%I:%M %p")
         d = d.replace(hour=t.hour, minute=t.minute)
-    return d.strftime("%Y-%m-%dT%H:%M:00-07:00")
+    return d.replace(tzinfo=PACIFIC).isoformat()
 
 
 def classify(text):
     low = (text or "").lower()
-    cats = [c for c, words in CATEGORY_WORDS.items() if any(w in low for w in words)]
+    # Match at word starts so "roof" doesn't hit "frost-proof".
+    cats = [c for c, words in CATEGORY_WORDS.items() if any(re.search(r"\b" + re.escape(w), low) for w in words)]
     bid_type = next((t for t, pat in BID_TYPES if re.search(pat, text or "", re.I)), "other")
     return cats, bid_type
 
@@ -144,7 +147,10 @@ def pull_civicplus(source):
         if re.search(r"\b(closed|awarded|cancel)", text, re.I) and not re.search(r"\bopen\b", text, re.I):
             continue
         closes = re.search(r"Closes?:?\s*(.{0,40})", text, re.I)
-        number = re.search(r"Bid (?:No\.?|Number|#):?\s*([\w\-./]+)", text, re.I)
+        # Award notices and bid results get posted on Bids.aspx too; without a closing date they aren't open bids.
+        if re.search(r"\baward|bid results|bid tab", title, re.I) and not (closes and parse_date(closes.group(1))):
+            continue
+        number = re.search(r"Bid (?:No\.?|Number|#):?\s*([\w\-./]*\d[\w\-./]*)", text, re.I)
         rows.append(base_row(source, title, href,
                              deadline=parse_date(closes.group(1)) if closes else None,
                              solicitation_number=number.group(1) if number else None,
@@ -161,28 +167,35 @@ def opengov_code(source):
 
 
 def pull_opengov(source):
-    """The portal is a JS app, so render it in a headless browser and read project links."""
+    """The portal page sits behind a Cloudflare check, but its JSON API answers plain requests."""
     code = opengov_code(source)
     if not code:
         return []
-    from playwright.sync_api import sync_playwright
-    url = f"https://procurement.opengov.com/portal/{code}?status=open"
+    api = f"https://api.procurement.opengov.com/api/v1/government/{code}/project/public"
+    body = {"filters": [{"type": "status", "value": "open"}], "limit": 100}
+    r = requests.post(api, json=body, headers={"User-Agent": UA}, timeout=TIMEOUT)
+    r.raise_for_status()
+    now = datetime.now(timezone.utc)
     rows = []
-    with sync_playwright() as p:
-        page = p.chromium.launch().new_page(user_agent=UA)
-        page.goto(url, wait_until="networkidle", timeout=60000)
-        for link in page.query_selector_all(f"a[href*='/portal/{code}/projects/']"):
-            title = (link.inner_text() or "").strip()
-            href = urljoin(url, link.get_attribute("href"))
-            if not title or any(r["source_url"] == href for r in rows):
-                continue
-            card = link.evaluate_handle("e => e.closest('tr, li, [class*=project]') || e.parentElement")
-            text = card.inner_text() if card else ""
-            due = re.search(r"Due:?\s*(.{0,40})", text, re.I)
-            rows.append(base_row(source, title.splitlines()[0], href,
-                                 deadline=parse_date(due.group(1)) if due else None,
-                                 extraction_method="html",
-                                 raw={"listing_url": url, "text": text[:1000]}))
+    for p in r.json().get("rows", []):
+        deadline = p.get("proposalDeadline")
+        if p.get("status") != "open" or p.get("isPrivate") or p.get("comingSoon"):
+            continue
+        # Portals also list outreach events and forms; they aren't solicitations.
+        if re.search(r"^outreach event|verification form|data room access", p["title"], re.I):
+            continue
+        if deadline and datetime.fromisoformat(deadline.replace("Z", "+00:00")) <= now:
+            continue
+        summary = BeautifulSoup(p.get("summary") or "", "html.parser").get_text(" ", strip=True)
+        rows.append(base_row(source, p["title"], f"https://procurement.opengov.com/portal/{code}/projects/{p['id']}",
+                             solicitation_number=p.get("financialId"),
+                             description=summary[:4000] or None,
+                             deadline=deadline,
+                             posted_date=(p.get("releaseProjectDate") or "")[:10] or None,
+                             extraction_method="api",
+                             raw={"listing_url": api, "id": p["id"],
+                                  "department": (p.get("department") or {}).get("name"),
+                                  "template": (p.get("template") or {}).get("title")}))
     return rows
 
 
