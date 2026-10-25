@@ -12,12 +12,12 @@
     },
     {
       "id": "wa-county-pierce",
-      "procurement_url": "https://www.piercecountywa.gov/265/Bid-Opportunities",
-      "platform": "civicplus",
-      "fetch_method": "html",
+      "procurement_url": "https://procurement.opengov.com/portal/piercecountywa",
+      "platform": "opengov",
+      "fetch_method": "browser",
       "status": "candidate",
       "discovered_via": "web_search",
-      "notes": "Also see https://www.piercecountywa.gov/5260/Current-Solicitations"
+      "notes": "Pierce County posts bids on OpenGov Procurement (linked from https://www.piercecountywa.gov/265/Bid-Opportunities)."
     },
     {
       "id": "wa-city-bellevue",
