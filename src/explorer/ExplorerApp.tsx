@@ -12,6 +12,10 @@ import { DetailPanel } from "./components/DetailPanel";
 import { Onboarding } from "./components/Onboarding";
 import { AccountButton, CoverageSheet, DataBanner, Legend, MapControls, Toast } from "./components/Chrome";
 import { IconAlert, IconArea, IconMap } from "./components/Icons";
+import { BrandLockup, BRAND_NAME, PRODUCT_NAME } from "./components/Brand";
+
+/** Brand bar height per layout; matches --bar-h in app.css. */
+const BAR_H = { wide: 56, narrow: 52 };
 
 export function ExplorerApp({ services }: { services: ExplorerServices }) {
   return (
@@ -61,12 +65,12 @@ function Shell() {
     [results.all, results.personalized, state.matching.byId],
   );
 
-  const sheetHeight = layout === "narrow" ? (sheet === "peek" ? 132 : sheet === "half" ? Math.round(window.innerHeight * 0.5) : window.innerHeight - 72) : 0;
+  const sheetHeight = layout === "narrow" ? (sheet === "peek" ? 132 : sheet === "half" ? Math.round(window.innerHeight * 0.5) : window.innerHeight - BAR_H.narrow - 12) : 0;
   const insets = useMemo(() => {
     if (!signedIn) return { top: 0, right: 0, bottom: 0, left: 0 };
-    if (layout === "narrow") return { top: 64, right: 56, bottom: sheetHeight, left: 0 };
+    if (layout === "narrow") return { top: BAR_H.narrow + 64, right: 56, bottom: sheetHeight, left: 0 };
     const left = 12 + 392 + (layout === "wide" && detailOpen ? 12 + 404 : 0);
-    return { top: 60, right: 64, bottom: 16, left: left + 12 };
+    return { top: BAR_H.wide + 60, right: 64, bottom: 16, left: left + 12 };
   }, [layout, detailOpen, sheetHeight, signedIn]);
 
   // Re-frame Washington around the panels once the explorer opens.
@@ -141,6 +145,14 @@ function Shell() {
         />
       </div>
 
+      <header className="topbar">
+        <a className="topbar-brand" href="/" aria-label={`${BRAND_NAME}, ${PRODUCT_NAME}`} onClick={(e) => { e.preventDefault(); if (signedIn) { actions.select(null); mapRef.current?.resetToWashington(); } }}>
+          <BrandLockup subtitle={PRODUCT_NAME} />
+        </a>
+        <span className="topbar-spacer" />
+        {signedIn && <AccountButton />}
+      </header>
+
       {!state.authChecked ? null : !signedIn ? (
         <AuthScreen />
       ) : (
@@ -162,7 +174,6 @@ function Shell() {
           )}
 
           <div className="top-right">
-            <AccountButton />
             <MapControls map={mapRef} legendOpen={legendOpen} onLegend={() => setLegendOpen((o) => !o)} />
           </div>
           <div className="top-center" style={layout === "wide" || layout === "medium" ? { left: insets.left, right: insets.right } : undefined}>

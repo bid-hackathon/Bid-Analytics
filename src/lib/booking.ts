@@ -1,16 +1,19 @@
 import type { FitTier, Opportunity } from "./contracts";
 
-// Booking a call with Jon from an opportunity that fits. The Calendly link is
-// configuration (NEXT_PUBLIC_BOOKING_URL). Until it is set the UI shows the
-// button as "coming soon" and never pretends a call can be booked.
+// Booking a call with Jon from an opportunity that fits. Jon's public Calendly
+// page is the default; NEXT_PUBLIC_BOOKING_URL overrides it per deployment.
+// If no valid https link is available the UI shows the button as "coming soon"
+// and never pretends a call can be booked.
 
 export const BOOKING_HOST = "Jon";
+
+export const DEFAULT_BOOKING_URL = "https://calendly.com/jjcochran-nxvb";
 
 /** Tiers where a call makes sense: the vendor could plausibly go after the work. */
 export const BOOKABLE_TIERS: FitTier[] = ["good_fit", "possible_fit"];
 
 export function bookingBaseUrl(): string | null {
-  const raw = process.env.NEXT_PUBLIC_BOOKING_URL?.trim();
+  const raw = process.env.NEXT_PUBLIC_BOOKING_URL?.trim() || DEFAULT_BOOKING_URL;
   if (!raw) return null;
   try {
     const u = new URL(raw);

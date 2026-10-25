@@ -41,7 +41,10 @@ const result = await build({
 
 const js = result.outputFiles[0].text.replace(/<\/script/gi, "<\\/script");
 const css = readFileSync(path.join(root, "src/styles/app.css"), "utf8");
-const html = `<title>Washington Contract Explorer</title>
+const html = `<title>Bid Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600&display=swap">
 <meta name="description" content="Map-first discovery of Washington public works opportunities with fit explanations. Development fixtures.">
 <style>${css}
 #root{height:100%}</style>
