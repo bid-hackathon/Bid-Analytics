@@ -30,7 +30,7 @@ Bid Analytics does the digging so they don't have to.
 2. Create an account with a username and password.
 3. Describe your business and follow the steps above. That's all the setup there is.
 
-Nothing to install and nothing to pay. Listings in the app are labeled sample data for now.
+Nothing to install and nothing to pay. In this demo the listings are labeled sample data, and your account and profile reset when you reload the page.
 
 ## Where the bids come from
 
