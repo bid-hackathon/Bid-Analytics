@@ -1,0 +1,121 @@
+{
+  "_about": "Primary bid portals for the accuracy-test counties (King, Snohomish, Pierce). WEBS and Seattle OpenGov were named by Colin on 2026-10-25; the rest come from each agency's own procurement page. Applied after wa_procurement_fixes.json.",
+  "updates": [
+    {
+      "id": "wa-platform-webs",
+      "procurement_url": "https://pr-webs-vendor.des.wa.gov/home.html",
+      "fetch_method": "browser",
+      "notes": "Statewide portal. Named by Colin as a must-include source."
+    },
+    {
+      "id": "wa-city-seattle",
+      "procurement_url": "https://procurement.opengov.com/portal/seattle",
+      "platform": "opengov",
+      "fetch_method": "browser",
+      "discovered_via": "manual",
+      "notes": "Named by Colin. City's OpenGov Procurement portal."
+    },
+    {
+      "id": "wa-county-king",
+      "procurement_url": "https://fa-epvh-saasfaprod1.fa.ocs.oraclecloud.com/fscmUI/faces/NegotiationAbstracts?prcBuId=300000001727151",
+      "platform": "oracle",
+      "fetch_method": "browser",
+      "discovered_via": "manual",
+      "notes": "Solicitations Abstract in King County's Oracle e-procurement system: all advertised solicitations."
+    },
+    {
+      "id": "wa-county-snohomish",
+      "procurement_url": "https://snoco.procureware.com/Bids",
+      "platform": "procureware",
+      "fetch_method": "browser",
+      "discovered_via": "manual",
+      "notes": "County's ProcureWare purchasing portal: available, in-evaluation and awarded bids."
+    },
+    {
+      "id": "wa-city-bellevue",
+      "procurement_url": "http://www.publicpurchase.com/gems/bellevue,wa/buyer/public/publicInfo",
+      "platform": "publicpurchase",
+      "fetch_method": "html",
+      "discovered_via": "manual",
+      "notes": "Open solicitations on Public Purchase. Small works go through the Shared Procurement Portal."
+    },
+    {
+      "id": "wa-county-pierce",
+      "fetch_method": "browser",
+      "notes": "OpenGov Procurement portal."
+    }
+  ],
+  "new": [
+    {
+      "id": "wa-city-seattle-consultant-contracting",
+      "name": "City of Seattle (consultant contracting)",
+      "state": "WA",
+      "agency_type": "city",
+      "county": "King",
+      "city": "Seattle",
+      "procurement_url": "https://www.seattle.gov/purchasing-and-contracting/consultant-contracting",
+      "platform": "custom",
+      "fetch_method": "html",
+      "status": "candidate",
+      "discovered_via": "manual",
+      "notes": "Consultant opportunities page from the spreadsheet; main portal is OpenGov."
+    },
+    {
+      "id": "wa-county-king-construction",
+      "name": "King County (construction)",
+      "state": "WA",
+      "agency_type": "county",
+      "county": "King",
+      "city": null,
+      "procurement_url": "https://kingcounty.gov/en/dept/executive-services/about-king-county/business-operations/finance-business-operations/procurement-payables/construction",
+      "platform": "custom",
+      "fetch_method": "html",
+      "status": "candidate",
+      "discovered_via": "manual",
+      "notes": "Construction solicitations page."
+    },
+    {
+      "id": "wa-city-tacoma-services",
+      "name": "City of Tacoma (services)",
+      "state": "WA",
+      "agency_type": "city",
+      "county": "Pierce",
+      "city": "Tacoma",
+      "procurement_url": "https://tacoma.gov/government/departments/finance/procurement-and-payables-division/purchasing/contracting-opportunities/services-solicitations/",
+      "platform": "custom",
+      "fetch_method": "html",
+      "status": "candidate",
+      "discovered_via": "manual",
+      "notes": "Tacoma splits solicitations by type; bidding happens in SAP Ariba."
+    },
+    {
+      "id": "wa-city-tacoma-supplies",
+      "name": "City of Tacoma (supplies)",
+      "state": "WA",
+      "agency_type": "city",
+      "county": "Pierce",
+      "city": "Tacoma",
+      "procurement_url": "https://tacoma.gov/government/departments/finance/procurement-and-payables-division/purchasing/contracting-opportunities/supplies-solicitations/",
+      "platform": "custom",
+      "fetch_method": "html",
+      "status": "candidate",
+      "discovered_via": "manual",
+      "notes": "Tacoma splits solicitations by type; bidding happens in SAP Ariba."
+    },
+    {
+      "id": "wa-platform-shared-procurement-portal",
+      "name": "Shared Procurement Portal (WA cities)",
+      "state": "WA",
+      "agency_type": "platform",
+      "county": null,
+      "city": null,
+      "procurement_url": "http://www.sharedprocurementportal.com/default",
+      "platform": "shared_procurement_portal",
+      "fetch_method": "html",
+      "status": "candidate",
+      "discovered_via": "manual",
+      "notes": "Small works and consultant rosters shared by Bellevue and other WA cities.",
+      "homepage_url": "http://www.sharedprocurementportal.com/"
+    }
+  ]
+}

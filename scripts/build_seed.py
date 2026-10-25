@@ -44,6 +44,14 @@ FIXES = {
     },
 }
 
+# Cities in the accuracy-test counties, used to tag WA rows that have a city but no county.
+TEST_COUNTY_CITIES = {
+    "King": "Seattle Bellevue Kent Renton Federal-Way Kirkland Auburn Redmond Sammamish Burien Shoreline Issaquah Des-Moines SeaTac Kenmore Tukwila Maple-Valley Covington Mercer-Island Lake-Forest-Park Newcastle Normandy-Park Snoqualmie North-Bend Enumclaw Black-Diamond Duvall Carnation Woodinville Pacific Algona Medina Clyde-Hill Yarrow-Point Hunts-Point Beaux-Arts Skykomish Vashon Bothell",
+    "Snohomish": "Everett Marysville Edmonds Lynnwood Lake-Stevens Mukilteo Mill-Creek Mountlake-Terrace Monroe Arlington Snohomish Stanwood Granite-Falls Sultan Gold-Bar Brier Woodway Darrington Index",
+    "Pierce": "Tacoma Lakewood Puyallup University-Place Bonney-Lake Gig-Harbor Fife Sumner DuPont Edgewood Fircrest Orting Steilacoom Buckley Eatonville Milton Roy Ruston Wilkeson Carbonado South-Prairie Spanaway Graham",
+}
+COUNTY_OF_CITY = {c.replace("-", " ").lower(): county for county, cities in TEST_COUNTY_CITIES.items() for c in cities.split()}
+
 PLATFORM_PATTERNS = [
     ("bidnetdirect.com", "bidnet"),
     ("bonfirehub.com", "bonfire"),
@@ -301,6 +309,9 @@ def main():
         r.update(state=state, platform=plat, fetch_method=method, discovered_via="manual")
         rows.append(r)
     rows = merge_agency_files(rows)
+    for r in rows:
+        if r["state"] == "WA" and not r["county"] and r["city"]:
+            r["county"] = COUNTY_OF_CITY.get(r["city"].lower())
     rows.sort(key=lambda r: r["id"])
 
     OUT_JSON.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
