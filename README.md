@@ -66,7 +66,7 @@ The registry is in [`data/sources.seed.json`](data/sources.seed.json) and loaded
 
 ## What's next
 
-- Pull live bids from the registry into the map, starting with the shared platforms that cover the most agencies.
+- Show live bids on the map. The bid puller already reads CivicPlus, OpenGov and OregonBuys portals, which together cover many agencies at once; next is running it on a schedule and switching the app to live data.
 - Turn on Oregon and Idaho in the app.
 
 ## Team
@@ -80,6 +80,10 @@ The registry is in [`data/sources.seed.json`](data/sources.seed.json) and loaded
 | Dhruv Kurpad | Backend and integration: repo setup, wiring the map to Supabase |
 | Colin Carrihill | Bid data: the 1,400+ source registry, bid data model, bid puller, product requirements |
 
+## How we built it
+
+Four people, one afternoon, each with a lane: Jon brought the domain knowledge and the problem, Ashwin wrote the spec and built the app, Colin built the bid data, and Dhruv wired them together. Much of the code and data work was done with Claude, in separate threads for the registry, the bid puller, the front end and the docs. Every change went in through a pull request you can read in the [history](https://github.com/bid-hackathon/Bid-Analytics/pulls?q=is%3Apr).
+
 ## For developers
 
 - **Front end:** Next.js app in `src/`. Run, test and build instructions, the code layout, and the API it expects are in [`docs/FRONTEND.md`](docs/FRONTEND.md). `NEXT_PUBLIC_DATA_MODE=fixtures` (the default) uses sample data; `live` calls the `/api/v1` backend.
@@ -87,3 +91,8 @@ The registry is in [`data/sources.seed.json`](data/sources.seed.json) and loaded
 - **Connecting the app to Supabase:** field-by-field mapping from the database to the app in [`docs/supabase-frontend-integration.md`](docs/supabase-frontend-integration.md).
 - **Secrets:** copy `.env.example` to `.env.local` and fill in your own keys. Never commit a real `.env`.
 - **Spec:** [`Washington_Contract_Explorer_SRS.md`](Washington_Contract_Explorer_SRS.md).
+- **All docs and scripts:** [`docs/README.md`](docs/README.md).
+
+## License
+
+[MIT](LICENSE). Free to use, copy and adapt.
