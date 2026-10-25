@@ -51,7 +51,7 @@ Keep everything in `fixtureServices` (auth, profile, matching, saving) and repla
 | `locations`, `locationStatus` | When `lat`/`lng` are set, use one location: `displayPoint: [lng, lat]`, `precision: city ? 'city' : 'county'`, `countyNames: county ? [county] : []`, `cityName: city`, `rawLocationText: location_text`, status `approximate`. Otherwise use `[]` and `unknown`. |
 | `requirements` | `requirements.map(r => ({ id: r, category: r === 'bonded' ? 'bonding' : r === 'licensed' ? 'license' : r === 'insured' ? 'insurance' : 'other', text: r, mandatory: null, evidenceRef: null, extractionStatus: 'extracted' }))`. Set `requirementsCompleteness: 'partial'`. |
 | `documentLinks` | `documents.map(d => ({ label: d.name, url: d.url, access: 'public' }))` |
-| `publicContact` | `{ name: contact_name, role: null, email: contact_email, phone: contact_phone, evidenceRef: null }` |
+| `publicContact` | `{ name: contact_name, role: contact_title, email: contact_email, phone: contact_phone, evidenceRef: null }`. `contact_address` has no field in `PublicContact`; show it in the detail view if wanted. |
 | `publishedValue` | `estimated_value_text ? { amount: null, min: null, max: null, currency: 'USD', rawText: estimated_value_text, evidenceRef: null } : null` |
 | `sourceReferences` | `[{ sourceId: source_id, sourceNativeId: solicitation_number, url: source_url, evidenceRef: null }]` |
 | `lastVerifiedAt`, `firstSeenAt` | `last_checked`, `created_at` |
