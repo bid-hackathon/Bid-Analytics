@@ -98,6 +98,7 @@ This takes a few minutes and one program.
 
 ## For developers
 
+- **Architecture:** how the app, Supabase and the bid puller fit together, with a diagram, in [`docs/system-design.md`](docs/system-design.md).
 - **Front end:** Next.js app in `src/`. Run, test and build instructions, the code layout, and the API it expects are in [`docs/FRONTEND.md`](docs/FRONTEND.md). `NEXT_PUBLIC_DATA_MODE=fixtures` (the default) uses sample data; `live` calls the `/api/v1` backend.
 - **Data:** schema in [`supabase/migrations/`](supabase/migrations/), seed in [`supabase/seed.sql`](supabase/seed.sql), bid fields in [`docs/bid-data-model.md`](docs/bid-data-model.md), registry notes in [`data/README.md`](data/README.md).
 - **Connecting the app to Supabase:** field-by-field mapping from the database to the app in [`docs/supabase-frontend-integration.md`](docs/supabase-frontend-integration.md).
