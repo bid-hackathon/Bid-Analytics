@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 XLSX = ROOT / "Hack-a-thon 102526.xlsx"
 OUT_JSON = ROOT / "data" / "sources.seed.json"
 OUT_SQL = ROOT / "supabase" / "seed.sql"
+AGENCIES = ROOT / "data" / "agencies"  # OR/ID lists and WA fixes from discovery
 
 # Shared portals: one search covers many agencies. Unverified URLs stay 'candidate'.
 PLATFORMS = [
@@ -258,6 +259,27 @@ def write_sql(rows):
     )
 
 
+def merge_agency_files(rows):
+    """Fold in data/agencies/: `*.json` lists add rows; wa_procurement_fixes.json patches by id."""
+    by_id = {r["id"]: r for r in rows}
+    template = source("", "", "special_district")
+    for path in sorted(AGENCIES.glob("*.json")):
+        data = json.loads(path.read_text())
+        if isinstance(data, dict):  # {"updates": [...], "new": [...]}
+            for u in data.get("updates", []):
+                if u["id"] in by_id:
+                    by_id[u["id"]].update({k: v for k, v in u.items() if k != "id"})
+                else:
+                    print(f"  {path.name}: no source {u['id']}, skipped")
+            data = data.get("new", [])
+        for r in data:
+            if r["id"] in by_id:
+                by_id[r["id"]].update({k: v for k, v in r.items() if v is not None})
+            else:
+                by_id[r["id"]] = {**template, **r}
+    return list(by_id.values())
+
+
 def main():
     wb = openpyxl.load_workbook(XLSX)
     rows = [
@@ -278,6 +300,7 @@ def main():
         r = source(id_, name, t, homepage=home, procurement=proc)
         r.update(state=state, platform=plat, fetch_method=method, discovered_via="manual")
         rows.append(r)
+    rows = merge_agency_files(rows)
     rows.sort(key=lambda r: r["id"])
 
     OUT_JSON.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
