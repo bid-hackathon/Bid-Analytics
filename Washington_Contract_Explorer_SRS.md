@@ -1,8 +1,8 @@
 # Washington Contract Explorer
 ## Software Requirements Specification and Parallel Build Handoff
 
-**Version:** 1.0  
-**Date:** October 25, 2026  
+**Version:** 1.1  
+**Date:** October 25, 2026 (v1.1 amendments the same day; see Section 23)  
 **Product owner:** Ashwin Subramanian  
 **Business stakeholder:** Jon  
 **Delivery window:** Four-hour hackathon build; schedule below is relative to implementation kickoff.  
@@ -13,11 +13,11 @@
 
 Read Sections 1-5, 12-15, and your workstream in Section 6 before implementing. Use the requirement identifiers when reporting progress. This document is both a product specification and a coordination contract between three engineering owners.
 
-Begin useful work immediately. The agency spreadsheet and Calendly URL are pending inputs, not reasons to stop unrelated implementation. Build against the agreed schemas and isolated development fixtures while real-source ingestion proceeds.
+Begin useful work immediately. Pending inputs are not reasons to stop unrelated implementation. Build against the agreed schemas and isolated development fixtures while real-source ingestion proceeds.
 
 Teammates and Claude agents may extend this document with source discoveries, implementation decisions, endpoint examples, and additional acceptance cases. Preserve confirmed product requirements. Identify proposed changes explicitly, update the change log, and notify owners affected by shared contracts. An implementation assumption must not be recorded as a user-approved decision.
 
-Do not build a general-purpose procurement CRM, bidding agent, pricing engine, or government contact enrichment system. The deliverable is an opportunity visualization and recommendation experience that directs interested vendors to Jon.
+Do not build a general-purpose procurement CRM, bidding agent, pricing engine, or government contact enrichment system. The deliverable is an opportunity visualization and recommendation experience that connects interested vendors with the agencies issuing the work.
 
 ## 1. Product definition
 
@@ -27,15 +27,15 @@ Washington vendors must navigate fragmented government procurement websites to d
 
 1. What open work is available near the areas I serve?
 2. Which opportunities fit what my business can actually do?
-3. Where can I get professional help pursuing the work?
+3. Who at the agency do I contact about the work?
 
 ### 1.2 Product outcome
 
-Build a visually strong, map-first website that aggregates real open government opportunities from a declared set of Washington agencies, helps vendors describe their capabilities, and produces explained fit recommendations. A prominent but unobtrusive call to action opens Jon's Calendly booking page.
+Build a visually strong, map-first website that aggregates real open government opportunities from a declared set of Washington agencies, helps vendors describe their capabilities, and produces explained fit recommendations. Each opportunity ends in a clear handoff: the issuing agency's name, website, email, and phone, so the vendor can contact the agency directly. All use requires a signed-in account.
 
 ### 1.3 Core journey
 
-Explore Washington opportunities anonymously -> inspect a project -> describe the business -> review and correct an AI-assisted profile -> see personalized matches on the same map and list -> inspect fit reasons and requirements -> optionally save with an account -> book a call with Jon.
+Create an account (username and password) -> explore Washington opportunities -> describe the business -> review and correct an AI-assisted profile -> see personalized matches on the same map and list -> inspect fit reasons and requirements -> save opportunities -> contact the agency using its name, website, email, and phone.
 
 ### 1.4 Primary user
 
@@ -45,11 +45,11 @@ The product should accept broader vendor capabilities without requiring the enti
 
 ### 1.5 Business purpose
 
-The website is a lead-generation funnel for Jon's consulting business. Jon provides additional relationships, judgment, proprietary information, and pricing expertise outside the product. These assets are not inputs to AI, matching, onboarding, or public display.
+The website is built for Jon's consulting business. In this build the in-product handoff is the agency's own contact information; there is no Calendly booking or automatic lead routing to Jon. Jon provides additional relationships, judgment, proprietary information, and pricing expertise outside the product. These assets are not inputs to AI, matching, onboarding, or public display.
 
 ### 1.6 Success statement
 
-A judge can enter a realistic vendor profile, watch relevant opportunities and map results change, understand why a project fits or does not fit, verify its government source, and open a working booking link. The demonstration must be grounded in real listings rather than fabricated map activity.
+A judge can enter a realistic vendor profile, watch relevant opportunities and map results change, understand why a project fits or does not fit, verify its government source, and see the issuing agency's name, website, email, and phone with working links. The demonstration must be grounded in real listings rather than fabricated map activity.
 
 ## 2. Decision register
 
@@ -58,7 +58,7 @@ A judge can enter a realistic vendor profile, watch relevant opportunities and m
 | ID | Decision |
 | --- | --- |
 | D-01 | Deliver a hackathon demonstration within a four-hour implementation window. |
-| D-02 | Use three primary workstreams: experience/map, vendor intelligence/matching, and opportunity ingestion/backend. |
+| D-02 | Use three workstreams, one person each: Frontend (A), Embeddings & matching (B), and Data collection & storage (C). *(Amended v1.1.)* |
 | D-03 | Ashwin owns the main frontend and visualization experience. |
 | D-04 | Washington is the geographic focus. An agency spreadsheet will define the target universe once supplied. |
 | D-05 | Groundwork and related public works are the main demonstration focus. |
@@ -66,14 +66,18 @@ A judge can enter a realistic vendor profile, watch relevant opportunities and m
 | D-07 | Use a dark terrain-oriented visual direction with restrained bright markers, smooth navigation, clusters, and county context. |
 | D-08 | Onboarding combines a natural-language business description with editable structured fields and targeted follow-ups. |
 | D-09 | Do not ask vendors for pricing information. |
-| D-10 | Anonymous visitors can explore and receive personalized recommendations. Accounts are for durable profile and shortlist saving. |
+| D-10 | An account is required for all use: browsing, onboarding, personalized recommendations, and saving. *(Amended v1.1; previously anonymous use was allowed.)* |
 | D-11 | Fit labels are Good fit, Possible fit, Not a fit, and Needs review. |
 | D-12 | Detail views include scope, agency, work location, dates, published requirements, source documents, and fit reasons. |
 | D-13 | Recommendations assess vendor suitability, not probability of winning. |
 | D-14 | Use real sourced opportunities. No fabricated live opportunities. |
-| D-15 | Jon's proprietary relationships, information, and pricing stay outside AI. Use Calendly for the professional handoff. |
+| D-15 | Jon's proprietary relationships, information, and pricing stay outside AI. The handoff is the agency's contact information; no Calendly. *(Amended v1.1.)* |
 | D-16 | Use React/Next.js. Data owners may choose backend, vector database, and ingestion implementation details consistent with shared contracts. |
 | D-17 | Claude API credits are available. Other service credentials and provisioning are not yet confirmed. |
+| D-18 | Washington only. Oregon, Idaho, and federal (SAM.gov) sources are out of scope. *(Added v1.1.)* |
+| D-19 | Collect opportunities ahead of time into stored snapshots. No scraping or open-web search when a user opens the page or requests matches. *(Added v1.1.)* |
+| D-20 | The user record stores username, password (only as a salted hash), a text summary of the confirmed profile, and its vector embedding. *(Added v1.1.)* |
+| D-21 | The handoff shows the issuing agency's name, website, email, and phone. *(Added v1.1.)* |
 
 ### 2.2 Proposed implementation defaults
 
@@ -83,10 +87,10 @@ These defaults make the specification executable without further product discuss
 | --- | --- | --- |
 | A-01 | Target approximately 10 agencies and 30-50 unique, verified open opportunities. | Gives a concrete discovery target without pretending coverage is guaranteed. |
 | A-02 | Collect broader categories when easy; default the demo to groundwork/public works. | Preserves breadth while making the primary journey coherent. |
-| A-03 | Open Calendly directly in a separate tab. | Avoids a lead CRM and unnecessary sharing of profile data. |
+| A-03 | *Removed in v1.1: the Calendly handoff is replaced by agency contact info (D-21).* | — |
 | A-04 | Natural-language map search is an enhancement after deterministic filters and matching work. | Strong demonstration value without making baseline navigation depend on AI. |
 | A-05 | Compare up to three opportunities only after the core journey is complete. | Useful, but not required for the initial product loop. |
-| A-06 | Show public procurement contacts only when supplied by a verified source. | Fits the original contact-discovery idea without adding enrichment. |
+| A-06 | Show agency name, website, email, and phone only when supplied by the agency spreadsheet or another verified public source. | Delivers the D-21 handoff without contact enrichment. |
 | A-07 | Desktop is the main judging surface; narrow-screen access remains usable. | The visual map experience is central. |
 | A-08 | Use cached real-source snapshots during the demo if live source refresh is unavailable. | Reduces network dependence while preserving provenance. |
 
@@ -95,10 +99,10 @@ These defaults make the specification executable without further product discuss
 | Input | Owner | Effect if missing |
 | --- | --- | --- |
 | Agency spreadsheet | Ashwin | Source targeting remains provisional; implement import and start from verified public sources. |
-| Jon's actual Calendly URL | Ashwin/Jon | Booking cannot pass final acceptance; show an honest unavailable state rather than a fake booking. |
+| Embedding provider credentials | B | Embeddings cannot be generated; matching falls back to structured signals with a visible degraded state. |
 | Existing repository and deployment target | Team | Choose once at kickoff; do not create incompatible parallel applications. |
 | Map provider credentials, if needed | Experience owner | Use an approved alternative; do not assume a free hosted tile service permits arbitrary use. |
-| Auth provider credentials, if needed | Backend owner | Durable account saving remains incomplete until configured; anonymous experience still works. |
+| Auth/storage configuration | C | Accounts are required for all use (D-10), so the product is unusable until sign-up and login work. Configure first. |
 | Final name and brand | Product owner | Keep the neutral working name and consistent provisional identity. |
 
 ## 3. Scope and priorities
@@ -114,7 +118,7 @@ The full P0 set is the target. If a P0 dependency cannot be completed, report th
 ### 3.2 P0 scope
 
 - Source inventory and agency spreadsheet import path.
-- Real opportunity ingestion from accessible sources; provenance and collection timestamps.
+- Real opportunity ingestion from accessible sources, collected ahead of time (D-19); provenance and collection timestamps.
 - Normalized opportunity records and duplicate handling.
 - Work-location extraction with clear precision and uncertainty.
 - Zoomable Washington map, clustering, synchronized result list, selection, and location disclosure.
@@ -123,8 +127,8 @@ The full P0 set is the target. If a P0 dependency cannot be completed, report th
 - Hybrid vendor onboarding and editable profile review.
 - Personalized ranking using semantic capability matching plus structured factors.
 - Evidence-based fit labels and explanations, including missing-information treatment.
-- Anonymous personalization and working account-based durable saving.
-- Direct booking CTA using Jon's configured Calendly URL.
+- Required accounts (username/password) with durable profile, text summary, embedding, and saved opportunities.
+- Agency contact handoff: the issuing agency's name, website, email, and phone on every opportunity detail.
 - Real-data snapshot fallback, clear empty/error states, deployment, and integrated demonstration.
 
 ### 3.3 P1 scope
@@ -135,7 +139,7 @@ The full P0 set is the target. If a P0 dependency cannot be completed, report th
 - Free-text follow-up conversation beyond essential profile clarification.
 - Map heatmap or density view and a compact timeline visualization.
 - Reusable shareable opportunity URLs and accessible standalone detail routes.
-- Simple anonymous funnel event counts without a CRM or personal-data dashboard.
+- Simple aggregate funnel event counts without a CRM or personal-data dashboard.
 
 ### 3.4 P2 / out of scope
 
@@ -148,6 +152,8 @@ The full P0 set is the target. If a P0 dependency cannot be completed, report th
 - Historical award analytics, incumbent research, and contract value forecasting.
 - Automated certification or license verification against every registry.
 - Automated recurring alerts, email campaigns, or sending user data to Jon.
+- Calendly or any booking handoff to Jon; anonymous (no-account) use.
+- Oregon, Idaho, and federal (SAM.gov) sources; live runtime scraping or open-web search.
 
 ## 4. Coverage model and terminology
 
@@ -161,7 +167,7 @@ Exclude awarded, canceled, and closed items from the default open catalog. Do no
 
 The agency spreadsheet, when received, is the target inventory. It is not evidence that every agency has open work or that every linked system is accessible. Classify agencies by their real procurement systems, including shared portal tenants.
 
-State, municipal, county, port, school, transit, university, utility, tribal, or federal entries are included only when present in the inventory or deliberately added and recorded. Until inventory review, do not imply that all these classes are covered.
+State, municipal, county, port, school, transit, university, utility, or tribal entries are included only when present in the inventory or deliberately added and recorded. Federal sources are out of scope (D-18). Until inventory review, do not imply that all these classes are covered.
 
 ### 4.3 Coverage counts
 
@@ -186,9 +192,9 @@ Valid work-location cases include an exact site, approximate address or road seg
 
 ## 5. User journeys
 
-### J-01: Anonymous exploration
+### J-01: Sign up and explore
 
-1. Visitor opens the website without signing in.
+1. Visitor opens the website and creates an account with a username and password, or signs in.
 2. A Washington overview and synchronized list show real available opportunities.
 3. Visitor zooms or selects a county and applies work-type or recency filters.
 4. Visible counts and markers reflect the same logical results.
@@ -197,35 +203,33 @@ Valid work-location cases include an exact site, approximate address or road seg
 
 ### J-02: Personalized discovery
 
-1. Visitor selects Find work for my business.
+1. Signed-in user selects Find work for my business.
 2. They describe services in their own words and provide their business base and service area.
 3. AI proposes a structured profile and asks a small number of useful questions.
-4. Visitor reviews and corrects the profile before it becomes active.
+4. User reviews and corrects the profile before it becomes active. On confirmation, the system stores a text summary of the profile and its vector embedding on the user record.
 5. The existing map and list change to personalized results.
 6. The vendor sees a fit label, specific reasons, and requirement gaps on each assessed opportunity.
 7. Changing a service area or capability changes the results without restarting onboarding.
 
-### J-03: Professional handoff
+### J-03: Contact the agency
 
 1. Vendor views an opportunity or their personalized shortlist.
-2. A CTA offers professional help reviewing fit and preparing next steps.
-3. Clicking opens Jon's Calendly page.
-4. The product does not claim that an appointment is booked until a booking is actually confirmed outside the app.
-5. No profile, documents, or opportunity notes are automatically sent to Jon in the default implementation.
+2. A Contact agency section shows the issuing agency's name, website, email, and phone, plus the solicitation contact when the listing publishes one.
+3. Website, email (`mailto:`), and phone (`tel:`) are working links; missing values show Not available.
+4. The product does not claim that contact was made or that the agency endorses the vendor.
+5. Nothing is sent automatically to the agency or to Jon.
 
 ### J-04: Save and return
 
-1. Anonymous vendor explores and personalizes normally.
-2. They select Save profile or Save opportunity.
-3. The app offers sign-in/create-account and preserves their current session state.
-4. After authentication, the confirmed profile and explicit save actions persist to their account.
-5. Returning to the account restores saved data and recomputes recommendations when needed.
+1. Signed-in vendor selects Save opportunity.
+2. The confirmed profile, its text summary and embedding, and explicit saves persist to their account.
+3. Signing in again restores saved data and recomputes recommendations when the profile or catalog has changed.
 
 ## 6. Three workstreams and ownership
 
-### 6.1 Workstream A: Experience and visualization
+### 6.1 Workstream A: Frontend
 
-**Owner:** Ashwin.  
+**Owner:** Ashwin (one person).  
 **Goal:** A polished, comprehensible map-first experience that makes the real data and recommendation behavior visible.
 
 **Owns**
@@ -235,7 +239,7 @@ Valid work-location cases include an exact site, approximate address or road seg
 - Filter controls and their representation in the URL or client state.
 - Hybrid onboarding screens, profile review, correction controls, and loading states.
 - Opportunity cards, detail panel, fit explanations, source links, and saved-state UI.
-- Account UI integration and Calendly CTA presentation.
+- Sign-up, login, and sign-out screens; agency contact panel (name, website, email, phone).
 - User-facing empty, partial-data, unavailable, and error states.
 - Visual QA and the judge-facing demonstration script.
 
@@ -246,27 +250,27 @@ Valid work-location cases include an exact site, approximate address or road seg
 1. Connected map/list/detail experience.
 2. Complete onboarding/profile-editing flow.
 3. Personalized result presentation with unknown-data handling.
-4. Save/sign-in/booking UI wired to actual behavior.
+4. Sign-up/login, save, and agency contact UI wired to actual behavior.
 5. Responsive and keyboard-usable main journey.
 
 **Can start immediately with** contract-valid fixtures clearly confined to development, an opportunity API adapter, and matching response examples.
 
-### 6.2 Workstream B: Vendor intelligence and matching
+### 6.2 Workstream B: Embeddings and matching
 
-**Owner:** Engineer 2.  
-**Goal:** Convert vendor descriptions into confirmed capability profiles and produce defensible, explained suitability rankings.
+**Owner:** Engineer 2 (one person).  
+**Goal:** Convert vendor descriptions into confirmed capability profiles, text summaries, and embeddings, and produce defensible, explained suitability rankings.
 
 **Owns**
 
 - Profile field definitions in collaboration with A and C.
 - Claude prompts for structured capability extraction and targeted follow-ups.
 - Industry/work-category suggestions and code mapping where evidence supports them.
-- Embedding/retrieval strategy and matching implementation.
+- Embedding model choice; profile text-summary generation; vendor and opportunity embeddings; retrieval and matching implementation.
 - Structured factors, known-mismatch rules, missing-information treatment, tiers, and explanations.
 - Profile revision identifiers, ranking version, and consistency of cached assessments.
 - Evaluation cases showing meaningful differences between vendors.
 
-**Does not own** source crawling, canonical opportunity status, public API routing, or the map renderer.
+**Does not own** source crawling, canonical opportunity status, database storage, public API routing, or the map renderer.
 
 **Deliverables**
 
@@ -278,19 +282,20 @@ Valid work-location cases include an exact site, approximate address or road seg
 
 **Can start immediately with** canonical opportunity examples and synthetic vendor profiles isolated from the real opportunity catalog.
 
-### 6.3 Workstream C: Opportunity ingestion and backend
+### 6.3 Workstream C: Data collection and storage
 
-**Owner:** Engineer 3.  
-**Goal:** Supply a reliable real opportunity catalog and stable application interfaces.
+**Owner:** Engineer 3 (one person).  
+**Goal:** Collect real opportunities ahead of time, store them with agency and user data, and expose stable application interfaces.
 
 **Owns**
 
-- Agency spreadsheet import, source registry, source adapters, and refresh execution.
+- Agency spreadsheet import, source registry, source adapters, and refresh execution. All collection runs ahead of time (D-19).
 - HTML/document extraction, normalization, duplicate grouping, and lifecycle status.
 - Work-location resolution and geocoding provenance.
 - Canonical storage, record validation, source evidence, and snapshot generation.
 - Public HTTP API and integration with B's matching/profile interfaces.
-- Account persistence, ownership checks, and saved opportunities.
+- User database (username, password hash, text summary, embedding), username/password auth, ownership checks, and saved opportunities.
+- Storage for opportunity embeddings produced by B, and agency contact data (website, email, phone).
 - Source health, coverage counts, deployment backend configuration, and secrets handling.
 
 **Does not own** frontend design or independently invent matching rules.
@@ -300,7 +305,7 @@ Valid work-location cases include an exact site, approximate address or road seg
 1. Agency/source inventory with honest source health.
 2. Real normalized opportunity catalog and exportable snapshot.
 3. Versioned application APIs and error shapes.
-4. Working persistence for profiles and saved opportunities.
+4. Working accounts and persistence for profiles, embeddings, and saved opportunities.
 5. Run instructions, configured deployment, and freshness/coverage metadata.
 
 ### 6.4 Joint decisions and coordination rules
@@ -310,6 +315,7 @@ Valid work-location cases include an exact site, approximate address or road seg
 | Product scope and prioritization | Ashwin | All owners acknowledge scope changes. |
 | Canonical opportunity and agency schema | C | A and B agree before integration. |
 | Vendor profile and fit assessment schema | B | A and C agree before integration. |
+| User record and embedding storage | C | B supplies embedding dimensions and model version; A supplies sign-up/login needs. |
 | HTTP request/response envelopes | C | A supplies consumption needs; B supplies matching fields. |
 | Filter semantics and counts | C | A validates UX; B validates effects on matching. |
 | Visual appearance | A | No matching/backend redesign needed for visual edits. |
@@ -338,7 +344,7 @@ One repository and one shared schema baseline are preferred. Use separate branch
 | SRC-13 | P0 | Treat an attachment access wall as missing document access, not missing opportunity existence. | Source links and known metadata remain available with a limitation note. |
 | SRC-14 | P0 | Keep extraction content separate from instructions. Source documents cannot alter prompts, application policies, or data destinations. | A prompt-injection fixture cannot trigger actions or change output schema. |
 | SRC-15 | P0 | Record checked source coverage without claiming all Washington procurement is covered. | Coverage summary reconciles with registry counts. |
-| SRC-16 | P1 | Extract available public procurement contact names, roles, emails, and phones. | Values have direct evidence; no guessed contact enrichment. |
+| SRC-16 | P0 | Store each agency's website, email, and phone from the agency spreadsheet or a verified public source, and extract the solicitation contact (name, role, email, phone) when the listing publishes one. *(Moved from P1 in v1.1.)* | Values have direct evidence; no guessed contact enrichment. |
 
 ### 7.1 Source collection approach
 
@@ -369,7 +375,7 @@ Map animation must serve navigation: smooth zoom to a selected county/site, clus
 
 | ID | Priority | Requirement | Acceptance evidence |
 | --- | --- | --- | --- |
-| MAP-01 | P0 | Open on a Washington overview without requiring login. | New browser session can explore immediately. |
+| MAP-01 | P0 | Open on a Washington overview immediately after sign-in. *(Amended v1.1: login required.)* | A signed-in session lands on the map without further steps. |
 | MAP-02 | P0 | Support pan, zoom, cluster expansion, marker selection, and list selection. | All interactions remain connected to the same selected opportunity. |
 | MAP-03 | P0 | Cluster nearby display anchors at lower zoom levels and reveal individual items at higher zoom. | Dense areas remain navigable; cluster counts represent unique opportunities. |
 | MAP-04 | P0 | Synchronize card and marker selection with a detail panel. | Clicking either representation opens the same record. |
@@ -424,11 +430,11 @@ For multi-location records, filtering matches if any known performance location 
 | DET-05 | P0 | Show published mandatory qualifications and important operational constraints; separate unknown from absent. |
 | DET-06 | P0 | Link to the original solicitation and available public documents. |
 | DET-07 | P0 | Show the active vendor's fit tier, concrete reasons, missing information, and known conflicts. |
-| DET-08 | P0 | Offer View original posting, Save opportunity, and Talk to a professional. |
+| DET-08 | P0 | Offer View original posting, Save opportunity, and Contact agency. |
 | DET-09 | P0 | Show contract budget/value only if explicitly published and sourced. Otherwise show Not published or omit the field. Never estimate it. |
-| DET-10 | P1 | Show directly sourced public procurement contacts without implying a personal introduction. |
+| DET-10 | P0 | Show the issuing agency's name, website, email, and phone, plus any directly sourced solicitation contact, without implying a personal introduction. *(Moved from P1 in v1.1.)* |
 
-The detail panel must not imply that the website is accepting a bid. View original posting leads to the procurement source; Talk to a professional leads to Jon.
+The detail panel must not imply that the website is accepting a bid. View original posting leads to the procurement source; Contact agency shows the agency's own contact details.
 
 ## 10. Functional requirements: hybrid onboarding
 
@@ -473,7 +479,7 @@ Three prompts is a proposed UX limit, not a model correctness requirement. A sho
 
 | ID | Priority | Requirement |
 | --- | --- | --- |
-| ONB-01 | P0 | Do not require an account to start or complete personalization. |
+| ONB-01 | P0 | Require a signed-in account to start and complete personalization. *(Amended v1.1.)* |
 | ONB-02 | P0 | Interpret a plain-language business description into a structured draft. |
 | ONB-03 | P0 | Distinguish user-entered, inferred, confirmed, and unknown fields. |
 | ONB-04 | P0 | Let the user correct any inferred capability or service area before applying it. |
@@ -485,6 +491,7 @@ Three prompts is a proposed UX limit, not a model correctness requirement. A sho
 | ONB-10 | P0 | Offer a working manual-field fallback when profile interpretation fails. |
 | ONB-11 | P0 | Avoid requesting unnecessary personal information, license document images, tax IDs, bank details, or identity documents. |
 | ONB-12 | P1 | Extract a capability statement with a file-size/type limit, server-side handling, and explicit user review. |
+| ONB-13 | P0 | On each confirmed profile revision, generate a plain-language text summary of the profile and its vector embedding, and store both on the user record. *(Added v1.1.)* |
 
 ## 11. Functional requirements: recommendation and fit
 
@@ -497,7 +504,7 @@ NAICS can be useful but must not be the sole matching mechanism. Preserve source
 ### 11.2 Logical matching pipeline
 
 1. Apply user-selected catalog filters and exclude known non-open records.
-2. Retrieve potentially relevant opportunities using semantic and structured signals.
+2. Retrieve potentially relevant opportunities by comparing the user's stored profile embedding with precomputed opportunity embeddings, plus structured signals.
 3. Evaluate known operational conflicts and published mandatory requirements.
 4. Assign a suitability tier and separate assessment completeness.
 5. Produce structured reasons grounded in confirmed profile fields and opportunity evidence.
@@ -592,6 +599,8 @@ The following fields define integration behavior. They do not mandate a particul
 | agencyType | State, county, city, port, school, university, utility, transit, tribal, federal, other, or unknown. |
 | jurisdiction | Named jurisdiction when known. |
 | websiteUrl | Official agency URL, nullable. |
+| email, phone | Agency contact email and phone, nullable; shown in the contact handoff. |
+| contactSource | Where the contact values came from (spreadsheet row or verified public URL). |
 | sourceIds | Registry references. |
 | inventoryOrigin | Spreadsheet row reference or documented manual addition. |
 | procurementCoverage | Checked, partial, inaccessible, not_checked, or no_public_listing_found. |
@@ -677,7 +686,7 @@ Never populate `geometry` or `displayPoint` with random offsets to make the map 
 
 ### 12.8 VendorProfile
 
-Include the fields in Section 10.2, plus `id`, `revision`, `ownerUserId` when saved, `originalDescription`, `confirmedAt`, and field-level provenance. Model-inferred fields remain drafts until confirmed. Store business capability facts without adding financial pricing fields.
+Include the fields in Section 10.2, plus `id`, `revision`, `ownerUserId`, `originalDescription`, `confirmedAt`, and field-level provenance. Every profile belongs to a user (12.11); each confirmed revision regenerates the user's `textSummary` and `embedding`. Model-inferred fields remain drafts until confirmed. Store business capability facts without adding financial pricing fields.
 
 Service area must be explicit enough for the matcher: selected counties, statewide, a supported radius around a verified base location, or a supported polygon. Preserve the user's original wording and the normalized representation. Avoid silently turning a travel-time preference into a straight-line radius.
 
@@ -691,6 +700,20 @@ Each reason/mismatch references at least one relevant profile field and opportun
 
 An evidence record should identify the source URL, optional document URL, collection time, short supporting excerpt, and page/section when available. Store only the amount of text needed for extraction review and provenance; do not publish entire restricted documents.
 
+### 12.11 User
+
+| Field | Type / meaning |
+| --- | --- |
+| id | Stable user ID. |
+| username | Unique login name. |
+| passwordHash | Salted hash (for example bcrypt or argon2). Plaintext passwords are never stored, logged, or returned. |
+| textSummary | Plain-language summary of the confirmed profile, generated by B. |
+| embedding | Vector embedding of `textSummary`, with `embeddingModel` and `embeddingVersion`. |
+| profileRevision | Confirmed profile revision the summary and embedding were built from. |
+| createdAt, updatedAt | Timestamps. |
+
+Opportunities also store an embedding from the same model and version, so matching compares like with like. When the embedding model changes, stored vectors are regenerated.
+
 ## 13. Application API contract
 
 These routes are a proposed stable interface. C may implement them as Next.js handlers or another service behind the same frontend adapter. B supplies the profile/matching modules or internal service; C exposes the public facade. A should not directly call provider APIs or depend on database-specific objects.
@@ -699,6 +722,9 @@ These routes are a proposed stable interface. C may implement them as Next.js ha
 
 | Method and route | Purpose | Owner |
 | --- | --- | --- |
+| POST /api/v1/auth/signup | Create an account with username and password. | C |
+| POST /api/v1/auth/login | Start an authenticated session. | C |
+| POST /api/v1/auth/logout | End the session. | C |
 | GET /api/v1/coverage | Source health, inventory coverage, freshness, catalog version. | C |
 | GET /api/v1/agencies | Agency filter options and coverage status. | C |
 | GET /api/v1/opportunities | Filtered opportunities, facets/counts, and display geometry. | C |
@@ -712,7 +738,7 @@ These routes are a proposed stable interface. C may implement them as Next.js ha
 | DELETE /api/v1/me/saved-opportunities/:id | Remove saved item. | C |
 | POST /api/v1/search/interpret | P1: convert text into supported filter draft and clarifications. | B logic, C facade |
 
-Auth provider routes may differ. The product contract is authenticated access to the user's own saved profile/items; no custom authentication system is required.
+All routes other than sign-up and login require an authenticated session. Auth may use a provider or a simple username/password implementation, as long as passwords are hashed and sessions are verified server-side.
 
 ### 13.2 Shared filter object
 
@@ -762,31 +788,28 @@ Return a stable error code, readable message, and retryability indicator. Minimu
 
 Do not return raw provider prompts, secrets, stack traces, full uploaded documents, or private account identifiers in error messages. The frontend must distinguish a true empty result from a failed fetch.
 
-### 13.6 Anonymous session behavior
+### 13.6 Authenticated session behavior
 
-Anonymous profile interpretation and matching must work without account creation. The initial implementation may pass a confirmed profile inline or use a short-lived opaque session reference. Choose one at kickoff and document it; do not accidentally create durable public profile records.
+Profile interpretation and matching run for the signed-in user and read their stored profile, text summary, and embedding. Never create profile records that are not owned by a user.
 
 Cancel or ignore stale requests when a profile revision changes. A response for revision 2 must not overwrite results for revision 3. Do not place full capability descriptions or personal information in URLs or analytics payloads.
 
-## 14. Accounts, saving, and professional handoff
+## 14. Accounts, saving, and agency contact handoff
 
 | ID | Priority | Requirement |
 | --- | --- | --- |
-| ACC-01 | P0 | No auth wall for catalog, details, onboarding, or personalized results. |
-| ACC-02 | P0 | Offer sign-in/create-account when the visitor requests durable saving. |
-| ACC-03 | P0 | Preserve the active anonymous profile and current selection through sign-in. |
-| ACC-04 | P0 | Persist only the user's confirmed profile and explicit saved items under their account. |
+| ACC-01 | P0 | Require sign-in for the catalog, details, onboarding, and personalized results. Sign-up and login are the only public screens. |
+| ACC-02 | P0 | Sign up and sign in with a unique username and password. |
+| ACC-03 | P0 | Store passwords only as salted hashes; never log or return them. |
+| ACC-04 | P0 | Persist the confirmed profile, its text summary and embedding, and explicit saved items under the user's account. |
 | ACC-05 | P0 | Enforce server-side ownership for profile and shortlist reads/writes. |
 | ACC-06 | P0 | Support sign-out without exposing the previous user's saved data to another account. |
-| ACC-07 | P0 | If account saving is unavailable, state that clearly; session-only state cannot be presented as durable account saving. |
-| CTA-01 | P0 | Configure Jon's Calendly URL outside UI source strings where practical. |
-| CTA-02 | P0 | Present Talk to a professional on details and personalized results without blocking exploration. |
-| CTA-03 | P0 | Open the configured booking page; do not claim the click is a completed appointment. |
-| CTA-04 | P0 | Do not send a vendor profile, attachment, email, or selected opportunity to Jon automatically. |
-| CTA-05 | P0 | If the URL is missing, show a clear unavailable state; no fake calendar or invented availability. |
-| CTA-06 | P1 | Count anonymous CTA clicks if desired, without recording them as bookings or collecting business text. |
+| CON-01 | P0 | Show the issuing agency's name, website, email, and phone on the opportunity detail and in personalized results. |
+| CON-02 | P0 | Use only values from the agency spreadsheet or a verified public source; show Not available for missing values, never a guessed address. |
+| CON-03 | P0 | Website, email, and phone are working links (`https:`, `mailto:`, `tel:`); nothing is sent automatically to the agency or to Jon. |
+| CON-04 | P0 | Do not imply that contact was made, that the agency endorses the vendor, or that a contract is guaranteed. |
 
-Suggested restrained CTA copy: **Talk to a professional**. Supporting copy: **Get help reviewing opportunities and preparing your next steps.** Do not imply access to guaranteed contracts or government favoritism.
+Suggested section label: **Contact agency**. Supporting copy: **Reach out to the agency directly about this opportunity.**
 
 ## 15. Nonfunctional requirements
 
@@ -814,6 +837,8 @@ These are demo acceptance targets to measure on the actual deployed application,
 ### 15.3 Security and privacy
 
 - Keep Claude, geocoder, database, auth, and other secret credentials server-side.
+- Hash passwords with a salted, slow hash (bcrypt or argon2) and enforce a minimum password length.
+- Store text summaries and embeddings server-side; never expose another user's summary or embedding through the API.
 - Restrict exposed map tokens by provider-supported origin/scope controls.
 - Validate and sanitize model-generated text and externally sourced content before display.
 - Do not execute model-produced code or follow document instructions as actions.
@@ -839,7 +864,7 @@ Use real sourced opportunities for integrated acceptance. Synthetic vendor profi
 
 | ID | Scenario | Expected result | Primary owner |
 | --- | --- | --- | --- |
-| AT-01 | Open site in a fresh anonymous session. | Real map/list loads; no login wall; coverage visible. | A/C |
+| AT-01 | Open the site in a fresh session, sign up, and sign in. | Sign-up/login gate appears first; after sign-in the real map/list loads with coverage visible. | A/C |
 | AT-02 | Filter to a county and paving-related work. | Markers, list, and counts refer to the same filtered unique opportunities. | A/C |
 | AT-03 | Select a marker, then a different card. | Detail and selected map state follow the same canonical ID. | A |
 | AT-04 | Inspect a county-level work location. | Approximate county location is disclosed; no exact-site claim. | A/C |
@@ -857,13 +882,14 @@ Use real sourced opportunities for integrated acceptance. Synthetic vendor profi
 | AT-16 | Deadline has passed or source says canceled. | Item leaves default open discovery and saved view shows status. | C/A |
 | AT-17 | Claude call fails. | Clear retry/manual fallback; no fabricated profile or match tiers. | A/B/C |
 | AT-18 | User gets no results. | Honest empty state, editable filters, no fabricated substitute opportunities. | A/B/C |
-| AT-19 | Sign in after creating an anonymous profile. | Confirmed state survives and saves to the correct account. | A/C |
+| AT-19 | Confirm a profile, then edit and reconfirm it. | The user record's text summary and embedding update to the new revision; matches recompute. | B/C |
 | AT-20 | Save, reload, and return to an account. | Saved profile and items persist. | A/C |
 | AT-21 | Try to read another user's saved profile/items. | Server denies access. | C |
-| AT-22 | Click Talk to a professional. | Real configured Calendly page opens; no profile sharing or false booking confirmation. | A/C |
+| AT-22 | Open Contact agency on an opportunity. | Agency name, website, email, and phone show with working links, or Not available when missing; nothing is sent automatically. | A/C |
 | AT-23 | Map provider fails. | List remains usable and map-specific error is clear. | A |
 | AT-24 | Navigate core flow with keyboard and narrow viewport. | Main actions are reachable/readable. | A |
 | AT-25 | Source text contains instructions to ignore rules or leak secrets. | Extraction treats it as data; schema and application behavior remain intact. | B/C |
+| AT-26 | Request any catalog or matching route without signing in. | Server returns `unauthenticated`; the UI redirects to login. | A/C |
 
 ### 16.1 Matching evaluation set
 
@@ -886,12 +912,12 @@ Prioritize a few meaningful automated checks for schema compatibility, duplicate
 
 The clock starts when the team begins implementation. Parallel work is expected throughout; the final hour is reserved for integration and verification, not postponed until every isolated feature is finished.
 
-| Elapsed time | A: Experience/map | B: Intelligence | C: Ingestion/backend | Shared checkpoint |
+| Elapsed time | A: Frontend | B: Embeddings & matching | C: Data collection & storage | Shared checkpoint |
 | --- | --- | --- | --- | --- |
-| 0:00-0:15 | App shell, layout, map choice, API adapter. | Profile/assessment schema and initial prompts. | Repository, source inventory, storage/API conventions. | Freeze schema v1, ownership, env names, and first demo vendor. |
+| 0:00-0:15 | App shell, layout, map choice, API adapter. | Profile/assessment schema and initial prompts. | Repository, source inventory, storage/API conventions, user table. | Freeze schema v1, ownership, env names, and first demo vendor. |
 | 0:15-0:45 | Map/list/detail scaffold with isolated fixtures. | Profile interpretation, manual fallback contract, first ranking cases. | One real source collector, canonical normalization, first snapshot and list endpoint. | Real vertical slice: one sourced record visible in the actual UI. |
-| 0:45-1:30 | Filters, location precision, onboarding/review flow. | Semantic + structured matching and explanations. | Additional high-yield source adapters, deduplication, dates, work locations. | Frontend consumes real data; profile endpoint connected. |
-| 1:30-2:15 | Personalized map/results, detail reasons, save/sign-in UI. | Tier rules, unknown handling, profile revisions, evaluation. | Matching facade, auth/persistence, source health and snapshot fallback. | Complete explore -> personalize -> inspect -> save -> Calendly path. |
+| 0:45-1:30 | Filters, location precision, onboarding/review flow. | Text summaries and embeddings for profiles and opportunities; semantic + structured matching and explanations. | Username/password auth; additional high-yield source adapters, deduplication, dates, work locations. | Frontend consumes real data; profile endpoint connected. |
+| 1:30-2:15 | Personalized map/results, detail reasons, save/sign-in UI. | Tier rules, unknown handling, profile revisions, evaluation. | Matching facade, embedding storage, persistence, source health and snapshot fallback. | Complete sign in -> explore -> personalize -> inspect -> save -> contact agency path. |
 | 2:15-3:00 | Visual polish, responsive behavior, keyboard/error states. | Explanation quality, latency, regression fixes. | Coverage expansion, location corrections, deployment reliability. | P0 acceptance pass and actual coverage inventory. |
 | 3:00-3:30 | Integrated demo rehearsal and issue fixes. | Fix observed recommendation defects. | Resolve deploy/source failures; pin a real snapshot. | All P0 gaps named; no new major architecture changes. |
 | 3:30-4:00 | Final presentation polish and verified walkthrough. | Verify final profile examples and versions. | Final source/deadline refresh where safe; smoke test deployment. | Release candidate, working URL, evidence, known limitations. |
@@ -908,15 +934,15 @@ Each delegated task must name its files/branch, inputs, outputs, acceptance evid
 
 ### 17.2 Scope triage if time compresses
 
-First remove P1 comparison, natural-language search, uploads, heatmap, and decorative animation. Then reduce the number of source adapters while retaining a truthful useful real catalog. Keep core map/list/detail, manual-capable onboarding, explained matching, provenance, and booking intact.
+First remove P1 comparison, natural-language search, uploads, heatmap, and decorative animation. Then reduce the number of source adapters while retaining a truthful useful real catalog. Keep core map/list/detail, manual-capable onboarding, explained matching, provenance, accounts, and the agency contact handoff intact.
 
-If auth, booking configuration, or another P0 cannot be completed, explicitly record the failure. Do not present local session saving as account persistence, or a disabled CTA as a working booking integration.
+If auth, contact data, or another P0 cannot be completed, explicitly record the failure. Do not present local session saving as account persistence, or placeholder contact details as real ones.
 
 ## 18. Demonstration plan
 
 ### 18.1 Suggested narrative
 
-1. Open on the Washington map and state the actual sourced coverage.
+1. Sign in and open on the Washington map; state the actual sourced coverage.
 2. Zoom into an area with real open public works opportunities.
 3. Inspect a project, its location precision, deadline, agency request, and source.
 4. Describe a realistic vendor: asphalt patching and small paving work in specified counties.
@@ -924,8 +950,8 @@ If auth, booking configuration, or another P0 cannot be completed, explicitly re
 6. Show the same map and list reordered with fit labels and reasons.
 7. Open a strong/possible match and one supported mismatch.
 8. Change one meaningful profile field and show a corresponding change.
-9. Save a profile/opportunity if account integration is ready.
-10. Open Jon's real Calendly booking page.
+9. Save an opportunity to the account.
+10. Open Contact agency and show the agency's name, website, email, and phone.
 
 Choose the demo location and profile after inspecting real available work. Do not invent an open pothole contract or alter fit rules to force a favorable result. If only mixed-scope opportunities exist, demonstrate the honest Possible fit explanation.
 
@@ -939,8 +965,8 @@ Choose the demo location and profile after inspecting real available work. Do no
 - One full onboarding and meaningful profile edit work.
 - Match explanations are specific and source-grounded.
 - Source links and available documents open.
-- Sign-in and saving are either verified or named as incomplete.
-- Calendly URL is configured and opens correctly.
+- Sign-up, sign-in, and saving work in a fresh browser session.
+- Agency contact details show for featured opportunities, with working links.
 - Empty/error states are understandable.
 - Actual agency/opportunity counts match the source inventory.
 
@@ -957,7 +983,8 @@ Choose the demo location and profile after inspecting real available work. Do no
 | AI outputs malformed fields or generic explanations. | Bad profile/match behavior. | Validate schema, retry once if appropriate, then manual/degraded path. |
 | Semantic relevance masks mandatory conflict. | Misleading Good fit label. | Apply supported conflict rules and information-completeness logic separately. |
 | Sparse real opportunities. | Fewer impressive map points. | Expand accessible approved sources; report actual coverage; improve interaction rather than fabricate density. |
-| Auth or Calendly not configured. | Save/booking cannot pass. | Configure early; visibly report any remaining incomplete integration. |
+| Auth not configured. | Nothing is usable, since accounts are required. | Build sign-up/login first and include it in the early vertical slice. |
+| Agency email/phone missing from the spreadsheet. | Contact handoff is incomplete. | Fill from the agency's official website where published; otherwise show Not available. |
 | Shared schema changes mid-build. | Integration breaks. | Version contract and coordinate changes with all consumers. |
 | Last-minute deployment failure. | Demo unavailable. | Deploy a vertical slice early and preserve a known good release. |
 
@@ -965,11 +992,11 @@ Choose the demo location and profile after inspecting real available work. Do no
 
 ### 20.1 Per-workstream completion
 
-**A is done when:** the real catalog drives a polished map/list/detail flow; onboarding and profile correction work; fit and uncertainty are understandable; saving/booking interactions reflect actual backend behavior; main responsive/accessibility checks pass.
+**A is done when:** the real catalog drives a polished map/list/detail flow; onboarding and profile correction work; fit and uncertainty are understandable; sign-up/login, saving, and contact interactions reflect actual backend behavior; main responsive/accessibility checks pass.
 
-**B is done when:** profile interpretation produces reviewable fields; ranking changes meaningfully with capabilities and service area; labels obey evidence/missing-data rules; explanations cite structured evidence; evaluation cases and version metadata are documented.
+**B is done when:** profile interpretation produces reviewable fields; confirmed profiles produce a stored text summary and embedding; ranking changes meaningfully with capabilities and service area; labels obey evidence/missing-data rules; explanations cite structured evidence; evaluation cases and version metadata are documented.
 
-**C is done when:** real sources populate valid canonical records; coverage and refresh limitations are visible; work locations are traceable; duplicates/status/dates are handled; application APIs, account persistence, and snapshot fallback work in deployment.
+**C is done when:** real sources populate valid canonical records; coverage and refresh limitations are visible; work locations are traceable; duplicates/status/dates are handled; application APIs, username/password accounts, user and embedding storage, agency contact data, and snapshot fallback work in deployment.
 
 ### 20.2 Whole-product completion
 
@@ -997,15 +1024,15 @@ These prompts assume this SRS is available to the teammate or agent. Each owner 
 
 ### 21.1 Prompt for Workstream A
 
-> You own the Experience and Visualization workstream for Washington Contract Explorer. Read the SRS, especially Sections 1-6, 8-10, and 12-18. Implement the React/Next.js map-first experience: dark Washington map, clustering, synchronized opportunity list, filters, detail panel, hybrid onboarding with editable profile review, personalized fit presentation, account-saving UI, and Calendly CTA. Use the canonical API contract rather than inventing source truth or local fit rules. Keep exact versus approximate work locations clear; statewide and unknown locations must remain discoverable. Anonymous visitors can browse and personalize. Build immediately against isolated contract-valid development fixtures, then connect the real source API as soon as available. Do not put synthetic opportunities into the real catalog. Preserve profile edits across sign-in and ignore stale matching responses. Deliver a connected deployed journey, focused visual/manual verification, and concise acceptance evidence. Treat comparison, natural-language search, uploads, and heatmap as P1. Coordinate shared schema changes with B and C. Keep the SRS updated with actual decisions and known limitations.
+> You own the Frontend workstream for Washington Contract Explorer. Read the SRS, especially Sections 1-6, 8-10, and 12-18. Implement the React/Next.js map-first experience: dark Washington map, clustering, synchronized opportunity list, filters, detail panel, hybrid onboarding with editable profile review, personalized fit presentation, sign-up/login and saving UI, and the agency contact panel (name, website, email, phone). Use the canonical API contract rather than inventing source truth or local fit rules. Keep exact versus approximate work locations clear; statewide and unknown locations must remain discoverable. Every screen except sign-up and login requires an account. Build immediately against isolated contract-valid development fixtures, then connect the real source API as soon as available. Do not put synthetic opportunities into the real catalog. Ignore stale matching responses after profile edits. Deliver a connected deployed journey, focused visual/manual verification, and concise acceptance evidence. Treat comparison, natural-language search, uploads, and heatmap as P1. Coordinate shared schema changes with B and C. Keep the SRS updated with actual decisions and known limitations.
 
 ### 21.2 Prompt for Workstream B
 
-> You own Vendor Intelligence and Matching for Washington Contract Explorer. Read the SRS, especially Sections 2-6, 10-13, and 16. Implement plain-language profile interpretation into a reviewable structured draft, targeted follow-ups, confirmed profile revisions, and semantic-plus-structured opportunity matching. Use services, exclusions, work categories/source-native codes, service area, supported capacity/experience, and timing. Never collect vendor pricing or ingest Jon's confidential data. Do not infer licenses, equipment, certifications, or government experience from stereotypes. Implement Good fit, Possible fit, Not a fit, and Needs review according to evidence and missing-data semantics. Unknown is not false; unassessed is not Not a fit. A mandatory supported conflict must not be hidden by high vector similarity. Return structured reasons, gaps, evidence references, profile/opportunity versions, and ranking version. Make the interface consumable by C's public API and A's UI without requiring frontend knowledge of the vector store. Evaluate the six cases in Section 16 and document actual behavior, latency, and limitations. Coordinate schema changes and keep the SRS/decision log updated.
+> You own Embeddings and Matching for Washington Contract Explorer. Read the SRS, especially Sections 2-6, 10-13, and 16. Implement plain-language profile interpretation into a reviewable structured draft, targeted follow-ups, confirmed profile revisions, a text summary and vector embedding for each confirmed profile (stored on the user record by C), opportunity embeddings, and semantic-plus-structured opportunity matching. Use services, exclusions, work categories/source-native codes, service area, supported capacity/experience, and timing. Never collect vendor pricing or ingest Jon's confidential data. Do not infer licenses, equipment, certifications, or government experience from stereotypes. Implement Good fit, Possible fit, Not a fit, and Needs review according to evidence and missing-data semantics. Unknown is not false; unassessed is not Not a fit. A mandatory supported conflict must not be hidden by high vector similarity. Return structured reasons, gaps, evidence references, profile/opportunity versions, and ranking version. Make the interface consumable by C's public API and A's UI without requiring frontend knowledge of the vector store. Evaluate the six cases in Section 16 and document actual behavior, latency, and limitations. Coordinate schema changes and keep the SRS/decision log updated.
 
 ### 21.3 Prompt for Workstream C
 
-> You own Opportunity Ingestion and Backend for Washington Contract Explorer. Read the SRS, especially Sections 2-7, 12-17, and 19-20. Build agency spreadsheet import, source registry and discovery, reusable source-platform adapters, real opportunity normalization, provenance, deduplication, lifecycle/date handling, work-location extraction, snapshot fallback, and the application API facade. Begin with verified accessible official sources while the spreadsheet is pending. Treat approximately 10 agencies and 30-50 unique open opportunities as planning targets, not facts or permission to pad the catalog. Preserve source-native IDs/codes, unknown dates and qualifications, exact versus approximate locations, and last successful refresh. Do not use agency headquarters as an unlabeled worksite. Exclude closed/awarded/canceled work from default discovery. Expose B's profile/matching functions behind the agreed routes, and implement account-owned profile/shortlist persistence. Deploy an early real-data vertical slice for A. Do not bypass access controls or let source text become instructions. Record source health and coverage limitations, keep secrets server-side, and provide run/configuration instructions, a real-source snapshot, and acceptance evidence. Backend/database/vector choices are yours if the agreed interface remains stable.
+> You own Data Collection and Storage for Washington Contract Explorer. Read the SRS, especially Sections 2-7, 12-17, and 19-20. Build agency spreadsheet import, source registry and discovery, reusable source-platform adapters, real opportunity normalization, provenance, deduplication, lifecycle/date handling, work-location extraction, snapshot fallback, and the application API facade. Begin with verified accessible official sources while the spreadsheet is pending. Treat approximately 10 agencies and 30-50 unique open opportunities as planning targets, not facts or permission to pad the catalog. Preserve source-native IDs/codes, unknown dates and qualifications, exact versus approximate locations, and last successful refresh. Do not use agency headquarters as an unlabeled worksite. Exclude closed/awarded/canceled work from default discovery. Expose B's profile/matching functions behind the agreed routes. Implement required username/password accounts with hashed passwords, and a user table storing username, password hash, text summary, and embedding, plus saved opportunities. Collect everything ahead of time; nothing is scraped at page load. Store agency website, email, and phone for the contact handoff. Deploy an early real-data vertical slice for A. Do not bypass access controls or let source text become instructions. Record source health and coverage limitations, keep secrets server-side, and provide run/configuration instructions, a real-source snapshot, and acceptance evidence. Backend/database/vector choices are yours if the agreed interface remains stable.
 
 ## 22. Source references and reuse candidates
 
@@ -1029,8 +1056,8 @@ Do not equate public GitHub visibility with an open-source reuse license. Confir
 | ID | Issue | Owner | Next action |
 | --- | --- | --- | --- |
 | O-01 | Agency spreadsheet not yet supplied. | Ashwin/C | Import, classify portals, confirm target universe and actual source yield. |
-| O-02 | Calendly URL not yet supplied. | Ashwin/Jon | Configure and verify direct booking navigation. |
-| O-03 | Deployment, map, and auth provisioning not selected. | A/C | Choose once at kickoff and record environment variable names. |
+| O-02 | *Closed in v1.1:* Calendly is no longer used; the handoff is agency contact info. | — | — |
+| O-03 | Deployment, map provider, and embedding provider not selected. Auth is username/password (D-20). | A/B/C | Choose once at kickoff and record environment variable names. |
 | O-04 | Source coverage target not verified against live inventory. | C | Record actual checked agencies, open records, location precision, and limitations. |
 | O-05 | P1 natural-language search and comparison were proposed, not expressly confirmed. | Ashwin | Implement only after core scope; no need to delay P0. |
 | O-06 | Exact code taxonomy and ranking thresholds not yet evaluated. | B | Choose source-compatible categories, version rules, and validate representative cases. |
@@ -1045,6 +1072,17 @@ Append an entry containing: date/time, author, affected requirement IDs, decisio
 | Version | Date | Change |
 | --- | --- | --- |
 | 1.0 | 2026-10-25 | Initial detailed SRS and three-workstream handoff based on product discussion. Unanswered implementation choices are marked as defaults; agency coverage and Calendly remain pending. |
+| 1.1 | 2026-10-25 | Team decisions after comparison with the client PRD: agency contact handoff replaces Calendly; accounts required; user record with text summary and embedding; Washington only; ahead-of-time collection; four fit labels kept; workstreams renamed. |
+
+#### Amendment 1.1
+
+- **Date/author:** 2026-10-25, Dhruv (team decision).
+- **Affected IDs:** D-02, D-10, D-15, D-18 to D-21 (new), A-03 (removed), A-06, Section 2.3, Section 3, J-01 to J-04, Section 6, SRC-16, MAP-01, DET-08, DET-10, ONB-01, ONB-13 (new), Section 11.2, Sections 12.2, 12.8, 12.11 (new), Sections 13.1 and 13.6, ACC-01 to ACC-06 (rewritten), ACC-07 and CTA-01 to CTA-06 (removed), CON-01 to CON-04 (new), Section 15.3, AT-01, AT-19, AT-22, AT-26 (new), Sections 17 to 21, O-02, O-03.
+- **Decision:** (1) The handoff is the issuing agency's name, website, email, and phone; no Calendly. (2) An account is required for all use. (3) The user record stores username, password hash, text summary, and vector embedding. (4) Washington only. (5) Opportunities are collected ahead of time. (6) The four fit labels stay. (7) Three one-person workstreams: Frontend, Data collection & storage, Embeddings & matching.
+- **Reason:** Team scoping decisions after reviewing the client PRD against this SRS.
+- **Compatibility impact:** New auth routes and a User schema. All catalog and matching routes now require auth. The Agency schema gains contact fields. Anonymous session behavior is removed.
+- **Owner notifications:** A (auth screens, contact panel), B (summary and embedding generation), C (user table, auth, contact data, embedding storage).
+- **Acceptance evidence:** AT-01, AT-19, AT-22, AT-26.
 
 ### 23.4 Implementation status template
 
