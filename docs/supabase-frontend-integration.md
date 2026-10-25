@@ -7,7 +7,7 @@ How the explorer in `src/` can read live data from the bid-finding lane. The sch
 - Project URL: `https://jpqkpyfccgzayoyrudkb.supabase.co`
 - Key: the **publishable** (anon) key only. Put it in `.env.local` as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and never commit it. Never put the secret key in a `NEXT_PUBLIC_` variable.
 - Anon can read:
-  - `sources`: the agency registry, about 1,457 rows for WA/OR/ID.
+  - `sources`: the agency registry, 1,450+ state and local agencies in WA/OR/ID (no federal).
   - `open_bids`: a view of `bids` where `status = 'open'` and the deadline hasn't passed.
   - `open_bids_near(p_lat, p_lng, p_miles)`: an RPC that returns open bids within a radius.
 - `leads` has no anon access. Writing a lead needs a server route that uses the secret key.
@@ -28,7 +28,7 @@ Keep everything in `fixtureServices` (auth, profile, matching, saving) and repla
 | --- | --- |
 | `id` | `id` |
 | `name`, `sourceNames` | `name`, `[name]` |
-| `agencyType` | `agency_type`. Map `higher_ed` to `university`, keep `state`/`county`/`city`/`port`/`school`/`utility`/`transit`/`federal` as they are, and map everything else (hospital, fire, water, parks, special_district, platform...) to `other`. |
+| `agencyType` | `agency_type`. Map `higher_ed` to `university`, keep `state`/`county`/`city`/`port`/`school`/`utility`/`transit` as they are, and map everything else (hospital, fire, water, parks, special_district, platform...) to `other`. |
 | `jurisdiction` | `city ?? county ?? state` |
 | `websiteUrl` | `homepage_url ?? procurement_url` |
 | `email`, `phone` | `null` (shows "Not available") |
@@ -51,7 +51,7 @@ Keep everything in `fixtureServices` (auth, profile, matching, saving) and repla
 | `locations`, `locationStatus` | When `lat`/`lng` are set, use one location: `displayPoint: [lng, lat]`, `precision: city ? 'city' : 'county'`, `countyNames: county ? [county] : []`, `cityName: city`, `rawLocationText: location_text`, status `approximate`. Otherwise use `[]` and `unknown`. |
 | `requirements` | `requirements.map(r => ({ id: r, category: r === 'bonded' ? 'bonding' : r === 'licensed' ? 'license' : r === 'insured' ? 'insurance' : 'other', text: r, mandatory: null, evidenceRef: null, extractionStatus: 'extracted' }))`. Set `requirementsCompleteness: 'partial'`. |
 | `documentLinks` | `documents.map(d => ({ label: d.name, url: d.url, access: 'public' }))` |
-| `publicContact` | `{ name: contact_name, role: null, email: contact_email, phone: contact_phone, evidenceRef: null }` |
+| `publicContact` | `{ name: contact_name, role: contact_title, email: contact_email, phone: contact_phone, evidenceRef: null }`. `contact_address` has no field in `PublicContact`; show it in the detail view if wanted. |
 | `publishedValue` | `estimated_value_text ? { amount: null, min: null, max: null, currency: 'USD', rawText: estimated_value_text, evidenceRef: null } : null` |
 | `sourceReferences` | `[{ sourceId: source_id, sourceNativeId: solicitation_number, url: source_url, evidenceRef: null }]` |
 | `lastVerifiedAt`, `firstSeenAt` | `last_checked`, `created_at` |
