@@ -1,0 +1,255 @@
+/* Development harness only. Approximates the shell's dark map stage. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100vh;
+  padding: 16px;
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(64, 92, 84, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 80% 80%, rgba(52, 64, 92, 0.35), transparent 60%),
+    #0d1013;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 214, 10, 0.12);
+  color: rgba(255, 236, 170, 0.95);
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 20px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.08) inset;
+}
+
+.panel {
+  min-width: 0;
+}
+
+.mapStage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-x: auto;
+}
+
+.tileGrid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(56px, 1fr));
+  grid-auto-rows: 48px;
+  gap: 4px;
+  max-width: 560px;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.07) inset;
+  color: rgba(235, 235, 245, 0.55);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    box-shadow 200ms ease,
+    color 200ms ease;
+}
+
+.tile:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.tile:focus-visible {
+  outline: 2px solid #0a84ff;
+  outline-offset: 1px;
+}
+
+.tileName {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.tileCount {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.tileCurrent {
+  background: rgba(10, 132, 255, 0.28);
+  box-shadow: 0 0 0 1px rgba(10, 132, 255, 0.55) inset;
+  color: #fff;
+}
+
+.tileAdded {
+  background: rgba(48, 209, 88, 0.22);
+  box-shadow: 0 0 0 1.5px rgba(48, 209, 88, 0.85) inset;
+  color: #fff;
+}
+
+.tileRemoved {
+  background: transparent;
+  box-shadow: 0 0 0 1.5px rgba(255, 159, 10, 0.8) inset;
+  color: rgba(255, 200, 120, 0.9);
+  background-image: repeating-linear-gradient(135deg, rgba(255, 159, 10, 0.14) 0 4px, transparent 4px 8px);
+}
+
+.tileFocused {
+  box-shadow:
+    0 0 0 2px #fff inset,
+    0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+.mapCallout {
+  margin: 0;
+  color: rgba(235, 235, 245, 0.7);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+  color: rgba(235, 235, 245, 0.6);
+  font-size: 12px;
+  list-style: none;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.legendNote {
+  flex-basis: 100%;
+  color: rgba(235, 235, 245, 0.4);
+}
+
+.toast {
+  align-self: flex-start;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(10, 132, 255, 0.16);
+  color: #9ecbff;
+}
+
+.devtools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.08) inset;
+}
+
+.fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0;
+  padding: 6px 10px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fieldset legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 4px;
+  color: rgba(235, 235, 245, 0.5);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.devButton {
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: rgba(118, 118, 128, 0.3);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.logBox {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.logTitle {
+  margin: 0 0 6px;
+  color: rgba(235, 235, 245, 0.6);
+}
+
+.logTitle strong {
+  color: #fff;
+}
+
+.log {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(235, 235, 245, 0.75);
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11.5px;
+  line-height: 1.55;
+}
