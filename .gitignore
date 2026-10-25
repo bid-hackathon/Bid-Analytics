@@ -5,3 +5,11 @@ dhruv/
 __pycache__/
 node_modules/
 data/bids.pulled.json
+
+# Frontend (workstream A)
+.next/
+out/
+artifact/dist/
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
