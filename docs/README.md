@@ -7,7 +7,7 @@ Start with the [project README](../README.md) for what Bid Analytics does and ho
 | [`FRONTEND.md`](FRONTEND.md) | Running, testing and building the map explorer; code layout; the `/api/v1` routes it expects | Product and front end |
 | [`supabase-frontend-integration.md`](supabase-frontend-integration.md) | Field-by-field mapping from the Supabase tables to the app's types | Data integration |
 | [`bid-data-model.md`](bid-data-model.md) | The `sources`, `bids` and `leads` tables and every bid field | Bid finding |
-| [`../data/README.md`](../data/README.md) | The 1,457-source agency registry and how to rebuild and load it | Bid finding |
+| [`../data/README.md`](../data/README.md) | The 1,456-source state and local agency registry and how to rebuild and load it | Bid finding |
 | [`../Washington_Contract_Explorer_SRS.md`](../Washington_Contract_Explorer_SRS.md) | Full software requirements spec for the explorer | Product |
 | [`demo-video-script.md`](demo-video-script.md) | Script for the demo video | Team |
 | [`team/`](team/) | Team slide (PNG and HTML) | Team |
