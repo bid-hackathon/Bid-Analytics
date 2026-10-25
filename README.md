@@ -20,6 +20,7 @@ Bid Analytics does the digging so they don't have to.
 4. **See your matches.** Open bids appear on the map and in a list. Each one gets a plain label (**Good fit**, **Possible fit**, **Needs review** or **Not a fit**) with the reasons behind it, for example a missing license or an area you don't serve. No mystery scores.
 5. **Narrow it down.** Filter by type of work, county, agency or deadline, or pan the map and tap **Search this area**.
 6. **Open a bid and reach out.** The detail view shows the deadline, requirements, and the agency's own website, email and phone, with copy buttons. Save the ones you like.
+7. **Get help winning it.** On a Good fit or Possible fit, tap **Book a call with Jon** to schedule time with a government contracting expert who will walk you through the requirements and your bid.
 
 ## Get started (no code)
 
@@ -35,7 +36,7 @@ You need a free [GitHub](https://github.com/signup) account and a free [Vercel](
 3. When it finishes, click **Visit**. Your copy is live at a web address you can bookmark or share with your team.
 4. Create an account on the first screen and follow the steps above.
 
-You don't need to change any settings. Out of the box it runs on the sample listings, so you can try every feature right away.
+You don't need to change any settings. Out of the box it runs on the sample listings, so you can try every feature right away. If you want the **Book a call** button to point to your own scheduling page, add a setting named `NEXT_PUBLIC_BOOKING_URL` with your Calendly (or similar) link in Vercel under **Settings → Environment Variables**, then redeploy.
 
 ### Option 2: Run it on your own computer
 
@@ -67,7 +68,6 @@ The registry is in [`data/sources.seed.json`](data/sources.seed.json) and loaded
 
 - Pull live bids from the registry into the map, starting with the shared platforms that cover the most agencies.
 - Turn on Oregon and Idaho in the app.
-- A **Get help winning this** button that connects a business with a government contracting expert.
 
 ## Team
 
