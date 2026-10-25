@@ -271,20 +271,20 @@ def merge_agency_files(rows):
     """Fold in data/agencies/: `*.json` lists add rows; wa_procurement_fixes.json patches by id."""
     by_id = {r["id"]: r for r in rows}
     template = source("", "", "special_district")
-    for path in sorted(AGENCIES.glob("*.json")):
-        data = json.loads(path.read_text())
-        if isinstance(data, dict):  # {"updates": [...], "new": [...]}
-            for u in data.get("updates", []):
-                if u["id"] in by_id:
-                    by_id[u["id"]].update({k: v for k, v in u.items() if k != "id"})
-                else:
-                    print(f"  {path.name}: no source {u['id']}, skipped")
-            data = data.get("new", [])
-        for r in data:
+    files = [(p.name, json.loads(p.read_text())) for p in sorted(AGENCIES.glob("*.json"))]
+    # New rows from every file first, so an update in one file can patch a row added by another.
+    for name, data in files:
+        for r in data.get("new", []) if isinstance(data, dict) else data:
             if r["id"] in by_id:
                 by_id[r["id"]].update({k: v for k, v in r.items() if v is not None})
             else:
                 by_id[r["id"]] = {**template, **r}
+    for name, data in files:
+        for u in data.get("updates", []) if isinstance(data, dict) else []:
+            if u["id"] in by_id:
+                by_id[u["id"]].update({k: v for k, v in u.items() if k != "id"})
+            else:
+                print(f"  {name}: no source {u['id']}, skipped")
     return list(by_id.values())
 
 
