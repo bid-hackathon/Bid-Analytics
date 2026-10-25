@@ -12,4 +12,10 @@ out/
 artifact/dist/
 *.tsbuildinfo
 next-env.d.ts
+
+# Backend (workstream B)
+.venv/
+*.pyc
+.cache/
+
 .DS_Store
