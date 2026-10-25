@@ -2,6 +2,8 @@
 
 **We help businesses win government contracts.**
 
+**Try it now: [bid-analytics-mauve.vercel.app](https://bid-analytics-mauve.vercel.app/)**
+
 Bid Analytics is a free tool that shows small businesses the government jobs posted near them. Describe what your business does in plain words, and it puts matching public bids on a map of Washington, each one labeled with how well it fits you and why.
 
 > Built at the Claude Impact Lab Hackathon (Seattle AI Week, October 2026). The app runs on clearly labeled sample listings today. The source list behind it, 1,450+ state and local agencies across Washington, Oregon and Idaho, is real and loaded into our database.
@@ -24,35 +26,11 @@ Bid Analytics does the digging so they don't have to.
 
 ## Get started (no code)
 
-### Option 1: Put your own copy online in about two minutes
+1. Go to **[bid-analytics-mauve.vercel.app](https://bid-analytics-mauve.vercel.app/)** on your phone or computer.
+2. Create an account with a username and password.
+3. Describe your business and follow the steps above. That's all the setup there is.
 
-You need a free [GitHub](https://github.com/signup) account and a free [Vercel](https://vercel.com/signup) account (you can sign up for Vercel with GitHub).
-
-1. Click this button:
-
-   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbid-hackathon%2FBid-Analytics&project-name=bid-analytics)
-
-2. Sign in when asked, keep the default settings, and click **Deploy**.
-3. When it finishes, click **Visit**. Your copy is live at a web address you can bookmark or share with your team.
-4. Create an account on the first screen and follow the steps above.
-
-You don't need to change any settings. Out of the box it runs on the sample listings, so you can try every feature right away. If you want the **Book a call** button to point to your own scheduling page, add a setting named `NEXT_PUBLIC_BOOKING_URL` with your Calendly (or similar) link in Vercel under **Settings → Environment Variables**, then redeploy.
-
-### Option 2: Run it on your own computer
-
-This takes a few minutes and one program.
-
-1. Install [Node.js](https://nodejs.org) (choose the "LTS" version and click through the installer).
-2. On this page, click the green **Code** button, then **Download ZIP**, and unzip it.
-3. Open a terminal in the unzipped folder (on a Mac, right-click the folder in Finder and choose **New Terminal at Folder**; on Windows, open the folder, type `cmd` in the address bar and press Enter).
-4. Copy and paste these two lines, pressing Enter after each:
-
-   ```
-   npm install
-   npm run dev
-   ```
-
-5. Open <http://localhost:3000> in your browser.
+Nothing to install and nothing to pay. Listings in the app are labeled sample data for now.
 
 ## Where the bids come from
 
@@ -83,6 +61,40 @@ The registry is in [`data/sources.seed.json`](data/sources.seed.json) and loaded
 ## How we built it
 
 Four people, one afternoon, each with a lane: Jon brought the domain knowledge and the problem, Ashwin wrote the spec and built the app, Colin built the bid data, and Dhruv wired them together. Much of the code and data work was done with Claude, in separate threads for the registry, the bid puller, the front end and the docs. Every change went in through a pull request you can read in the [history](https://github.com/bid-hackathon/Bid-Analytics/pulls?q=is%3Apr).
+
+## Host your own copy
+
+Most businesses should just use the link above. If you want your own copy, for example to change the **Book a call** link, either of these works without writing code.
+
+### Put a copy online with Vercel
+
+You need a free [GitHub](https://github.com/signup) account and a free [Vercel](https://vercel.com/signup) account (you can sign up for Vercel with GitHub).
+
+1. Click this button:
+
+   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbid-hackathon%2FBid-Analytics&project-name=bid-analytics)
+
+2. Sign in when asked, keep the default settings, and click **Deploy**.
+3. When it finishes, click **Visit**. Your copy is live at a web address you can bookmark or share with your team.
+4. Create an account on the first screen.
+
+You don't need to change any settings. Out of the box it runs on the sample listings, so you can try every feature right away. If you want the **Book a call** button to point to your own scheduling page, add a setting named `NEXT_PUBLIC_BOOKING_URL` with your Calendly (or similar) link in Vercel under **Settings → Environment Variables**, then redeploy.
+
+### Run it on your own computer
+
+This takes a few minutes and one program.
+
+1. Install [Node.js](https://nodejs.org) (choose the "LTS" version and click through the installer).
+2. On this page, click the green **Code** button, then **Download ZIP**, and unzip it.
+3. Open a terminal in the unzipped folder (on a Mac, right-click the folder in Finder and choose **New Terminal at Folder**; on Windows, open the folder, type `cmd` in the address bar and press Enter).
+4. Copy and paste these two lines, pressing Enter after each:
+
+   ```
+   npm install
+   npm run dev
+   ```
+
+5. Open <http://localhost:3000> in your browser.
 
 ## For developers
 
