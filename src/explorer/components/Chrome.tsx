@@ -76,7 +76,8 @@ export function AccountButton() {
   return (
     <div className="account" ref={ref}>
       <button className="control glass control-solo account-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={`Account: ${state.session.user.username}`}>
-        <IconUser size={18} />
+        <IconUser size={17} />
+        <span className="account-name">{state.session.user.username}</span>
       </button>
       {open && (
         <div className="menu glass-panel" role="menu">

@@ -134,7 +134,7 @@ export function followUpsFor(d: VendorProfileFields): FollowUpQuestion[] {
     });
   if (d.bonding.value == null && d.coreServices.value?.length)
     qs.push({
-      id: "q-bond", field: "bonding", prompt: "Can you provide a bid bond when a job asks for one?", why: "Many public works bids require a bid guarantee. We won't rule anything out if you're not sure.",
+      id: "q-bond", field: "bonding", prompt: "Can you meet the bonding requirement on a bid?", why: "Many public works bids require bonding. We won't rule anything out if you're not sure.",
       options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }, { label: "Not sure", value: "unknown" }],
     });
   if (qs.length < 3 && d.roleInterest.value == null)

@@ -19,6 +19,7 @@ Copy `.env.example` to `.env.local` to change modes. Never commit a real `.env`.
 | --- | --- | --- |
 | `NEXT_PUBLIC_DATA_MODE` | `fixtures` (default), `live` | `fixtures` runs on labeled sample data and simulated services. `live` calls the backend. |
 | `NEXT_PUBLIC_API_BASE_URL` | URL or empty | Origin of the `/api/v1` routes. Empty means same origin. |
+| `NEXT_PUBLIC_BOOKING_URL` | https URL or empty | Overrides Jon's scheduling page. Empty uses https://calendly.com/jjcochran-nxvb. Shown as "Book a call with Jon" on Good fit and Possible fit jobs. |
 
 Nothing secret belongs in a `NEXT_PUBLIC_` variable. They ship to the browser.
 

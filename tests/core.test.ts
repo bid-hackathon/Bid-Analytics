@@ -91,3 +91,11 @@ test("sign-out clears profile, saved items and matching", () => {
   assert.equal(s.profile, null);
   assert.deepEqual(s.saved, []);
 });
+
+test("booking link: https only, tagged with the opportunity id, nothing personal", async () => {
+  const { bookingUrlFor } = await import("@/lib/booking");
+  assert.equal(bookingUrlFor({ id: "dev-001" }, null), null);
+  const u = new URL(bookingUrlFor({ id: "dev-001" }, "https://calendly.com/example/intro")!);
+  assert.equal(u.searchParams.get("utm_content"), "dev-001");
+  assert.deepEqual([...u.searchParams.keys()].sort(), ["utm_content", "utm_source"]);
+});
