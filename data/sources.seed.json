@@ -19450,25 +19450,6 @@
     }
   },
   {
-    "id": "us-federal-sam-gov",
-    "name": "SAM.gov contract opportunities",
-    "state": "US",
-    "agency_type": "federal",
-    "county": null,
-    "city": null,
-    "lat": null,
-    "lng": null,
-    "homepage_url": "https://sam.gov/",
-    "procurement_url": "https://sam.gov/search/?index=opp",
-    "platform": "sam",
-    "fetch_method": "api",
-    "status": "candidate",
-    "last_verified": null,
-    "discovered_via": "manual",
-    "notes": null,
-    "raw": null
-  },
-  {
     "id": "wa-city-auburn",
     "name": "City of Auburn",
     "state": "WA",

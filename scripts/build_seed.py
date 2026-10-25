@@ -24,8 +24,8 @@ OUT_SQL = ROOT / "supabase" / "seed.sql"
 AGENCIES = ROOT / "data" / "agencies"  # OR/ID lists and WA fixes from discovery
 
 # Shared portals: one search covers many agencies. Unverified URLs stay 'candidate'.
+# State and local only: federal (SAM.gov) is out of scope.
 PLATFORMS = [
-    ("us-federal-sam-gov", "SAM.gov contract opportunities", "US", "federal", "https://sam.gov/", "https://sam.gov/search/?index=opp", "sam", "api"),
     ("wa-platform-webs", "Washington's Electronic Business Solution (WEBS)", "WA", "platform", "https://des.wa.gov/", "https://pr-webs-vendor.des.wa.gov/", "webs", "browser"),
     ("wa-platform-bxwa", "Builders Exchange of Washington", "WA", "platform", "https://www.bxwa.com/", "https://www.bxwa.com/", "bxwa", "browser"),
     ("or-platform-oregonbuys", "OregonBuys", "OR", "platform", "https://oregonbuys.gov/", "https://oregonbuys.gov/bso/", "oregonbuys", "browser"),

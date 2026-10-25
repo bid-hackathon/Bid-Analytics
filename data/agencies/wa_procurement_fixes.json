@@ -47,11 +47,11 @@
     },
     {
       "id": "wa-city-everett",
-      "procurement_url": "https://www.everettwa.gov/319",
-      "platform": "civicplus",
-      "fetch_method": "html",
-      "status": "candidate",
-      "discovered_via": "web_search",
+      "procurement_url": "https://procurement.opengov.com/portal/everettwa",
+      "platform": "opengov",
+      "fetch_method": "api",
+      "status": "verified",
+      "discovered_via": "OpenGov public government list",
       "county": "Snohomish"
     }
   ],
