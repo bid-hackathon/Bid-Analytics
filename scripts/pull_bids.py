@@ -340,16 +340,19 @@ ADAPTERS = {"civicplus": pull_civicplus, "opengov": pull_opengov, "oregonbuys": 
 
 def load_sources():
     rows = json.load(open(ROOT / "data" / "sources.seed.json"))
+    fixes = []
     for f in sorted((ROOT / "data" / "agencies").glob("*.json")):
         data = json.load(open(f))
         if isinstance(data, list):
             rows += data
-        else:  # wa_procurement_fixes.json
-            by_id = {r["id"]: r for r in rows}
-            for u in data.get("updates", []):
-                if u["id"] in by_id:
-                    by_id[u["id"]].update(u)
-            rows += data.get("new", [])
+        else:  # wa_procurement_fixes.json, discovered_portals.json: apply after every list is loaded
+            fixes.append(data)
+    for data in fixes:
+        for u in data.get("updates", []):
+            for r in rows:  # ids can repeat across lists; update every copy
+                if r["id"] == u["id"]:
+                    r.update(u)
+        rows += data.get("new", [])
     return rows
 
 
@@ -389,6 +392,9 @@ def main():
     todo = {}
     for s in load_sources():
         name = adapter_for(s)
+        # State and local agencies only: federal bids (SAM.gov) are out of scope.
+        if s.get("agency_type") == "federal" or s.get("state") not in ("WA", "OR", "ID"):
+            continue
         if name in wanted and (not args.state or s["state"] == args.state):
             todo.setdefault(name, []).append(s)
 
