@@ -33,7 +33,7 @@ const result = await build({
   jsx: "automatic",
   write: false,
   loader: { ".jpg": "dataurl" },
-  define: { "process.env.NODE_ENV": '"production"', "process.env.NEXT_PUBLIC_DATA_MODE": '"fixtures"', "process.env.NEXT_PUBLIC_API_BASE_URL": '""' },
+  define: { "process.env.NODE_ENV": '"production"', "process.env.NEXT_PUBLIC_DATA_MODE": '"fixtures"', "process.env.NEXT_PUBLIC_API_BASE_URL": '""', "process.env.NEXT_PUBLIC_BOOKING_URL": JSON.stringify(process.env.NEXT_PUBLIC_BOOKING_URL ?? "") },
   alias: { "@": path.join(root, "src") },
   plugins: [globalsPlugin],
   legalComments: "none",
@@ -41,7 +41,10 @@ const result = await build({
 
 const js = result.outputFiles[0].text.replace(/<\/script/gi, "<\\/script");
 const css = readFileSync(path.join(root, "src/styles/app.css"), "utf8");
-const html = `<title>Washington Contract Explorer</title>
+const html = `<title>Bid Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600&display=swap">
 <meta name="description" content="Map-first discovery of Washington public works opportunities with fit explanations. Development fixtures.">
 <style>${css}
 #root{height:100%}</style>

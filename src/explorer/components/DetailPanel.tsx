@@ -6,6 +6,9 @@ import { AGENCY_TYPE_LABEL, categoryLabel, PRECISION_COPY } from "@/lib/taxonomy
 import { deadlineLabel, formatDateValue, formatTimestamp } from "@/lib/dates";
 import { useExplorer } from "../store";
 import { FitExplanation, FitState } from "./Fit";
+import { BookCallButton, BookCallCard } from "./BookCall";
+import { BOOKABLE_TIERS } from "@/lib/booking";
+import { fitLabel } from "@/lib/taxonomy";
 import {
   IconBookmark, IconBuilding, IconCalendar, IconChevronLeft, IconClose, IconCopy, IconDoc, IconExternal, IconGlobe, IconMail, IconPhone, IconPin, IconAlert, IconCheck,
 } from "./Icons";
@@ -19,6 +22,7 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
   const headingRef = useRef<HTMLHeadingElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLElement>(null);
+  const bookRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true });
@@ -48,6 +52,7 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
   const dl = deadlineLabel(o.deadline);
   const originalUrl = o.sourceReferences.find((r) => r.url)?.url ?? null;
   const simulatedFit = services.integration.matching === "simulated";
+  const canBook = !!assessment?.tier && BOOKABLE_TIERS.includes(assessment.tier);
 
   return (
     <div className="detail" aria-labelledby="detail-title">
@@ -72,10 +77,11 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
             <FitState assessment={assessment} personalized={!!assessment} pending={!!state.profile && state.matching.status === "pending"} failed={!!state.profile && state.matching.status === "error"} />
           </div>
           <div className="detail-actions">
+            {canBook && <BookCallButton onClick={() => bookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })} />}
             {originalUrl ? (
-              <a className="btn btn-filled" href={originalUrl} target="_blank" rel="noopener noreferrer"><IconExternal size={16} />View original posting</a>
+              <a className={`btn ${canBook ? "btn-gray" : "btn-filled"}`} href={originalUrl} target="_blank" rel="noopener noreferrer"><IconExternal size={16} />View original posting</a>
             ) : (
-              <button className="btn btn-filled" disabled title="No source link for this record"><IconExternal size={16} />View original posting</button>
+              <button className={`btn ${canBook ? "btn-gray" : "btn-filled"}`} disabled title="No source link for this record"><IconExternal size={16} />View original posting</button>
             )}
             <button className={`btn btn-gray${saved ? " is-on" : ""}`} onClick={() => actions.toggleSaved(o.id)} aria-pressed={saved}>
               <IconBookmark size={16} filled={saved} />{saved ? "Saved" : "Save"}
@@ -88,7 +94,10 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
         </header>
 
         {assessment?.tier ? (
-          <FitExplanation a={assessment} simulated={simulatedFit} />
+          <>
+            <FitExplanation a={assessment} simulated={simulatedFit} />
+            {canBook && <BookCallCard ref={bookRef} o={o} tierLabel={fitLabel(assessment.tier)} />}
+          </>
         ) : !state.profile ? (
           <section className="detail-section personalize-inline">
             <p>Add your business profile to see whether this job fits your services, area, and qualifications.</p>
