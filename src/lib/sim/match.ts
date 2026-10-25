@@ -108,7 +108,9 @@ export function assess(o: Opportunity, p: VendorProfile, _agency: Agency | undef
         clar.push(`Confirm whether you have ${t.name}.`);
       }
     } else if (!t && r.mandatory) {
-      unknowns.push({ text: `Check before bidding: ${r.text}`, profileFields: [], evidence: r.evidenceRef });
+      // Mandatory experience or equipment is material eligibility the profile can't confirm yet.
+      if (r.category === "experience" || r.category === "equipment") cap = true;
+      unknowns.push({ text: `Check before bidding: ${r.text}`, profileFields: r.category === "experience" ? ["relevantExperience"] : r.category === "equipment" ? ["equipment"] : [], evidence: r.evidenceRef });
     }
   }
   if (o.requirementsCompleteness !== "complete") unknowns.push(s("Requirements may be incomplete. Read the full solicitation before bidding."));

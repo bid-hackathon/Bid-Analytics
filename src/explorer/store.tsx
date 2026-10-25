@@ -41,7 +41,7 @@ export interface ExplorerState {
   toast: { id: number; text: string; tone: "info" | "error" } | null;
 }
 
-const initial: ExplorerState = {
+export const initial: ExplorerState = {
   authChecked: false,
   session: null,
   reauthRequired: false,
@@ -61,7 +61,7 @@ const initial: ExplorerState = {
   toast: null,
 };
 
-type Action =
+export type Action =
   | { type: "auth/checked"; session: Session | null }
   | { type: "auth/signedIn"; session: Session }
   | { type: "auth/signedOut" }
@@ -88,7 +88,7 @@ type Action =
   | { type: "sheet"; value: ExplorerState["sheet"] }
   | { type: "toast"; text: string | null; tone?: "info" | "error" };
 
-function reducer(s: ExplorerState, a: Action): ExplorerState {
+export function reducer(s: ExplorerState, a: Action): ExplorerState {
   switch (a.type) {
     case "auth/checked":
       return { ...s, authChecked: true, session: a.session };

@@ -11,7 +11,7 @@ import { ResultsPanel } from "./components/ResultsPanel";
 import { DetailPanel } from "./components/DetailPanel";
 import { Onboarding } from "./components/Onboarding";
 import { AccountButton, CoverageSheet, DataBanner, Legend, MapControls, Toast } from "./components/Chrome";
-import { IconAlert, IconArea, IconList, IconMap } from "./components/Icons";
+import { IconAlert, IconArea, IconMap } from "./components/Icons";
 
 export function ExplorerApp({ services }: { services: ExplorerServices }) {
   return (
@@ -121,7 +121,7 @@ function Shell() {
   const detail$ = detailOpen ? <DetailPanel onClose={() => actions.select(null)} showBack={layout !== "wide"} /> : null;
 
   return (
-    <div className={`app layout-${layout}${signedIn ? "" : " is-gated"}`}>
+    <div className={`app layout-${layout}${signedIn ? "" : " is-gated"}${layout === "narrow" ? ` sheet-${sheet}` : ""}`}>
       <div className="map-stage" aria-hidden={!signedIn || undefined}>
         <MapView
           ref={mapRef}
@@ -153,7 +153,7 @@ function Shell() {
               {layout === "wide" && detailOpen && <aside className="panel panel-detail" aria-label="Opportunity details">{detail$}</aside>}
             </>
           ) : (
-            <aside className={`sheet is-${sheet}`} aria-label={detailOpen ? "Opportunity details" : "Opportunities"} style={{ height: sheetHeight }}>
+            <aside className={`sheet is-${sheet}`} aria-label={detailOpen ? "Opportunity details" : "Opportunities"} style={{ height: sheetHeight }} onFocusCapture={() => sheet === "peek" && setSheet("half")}>
               <button className="sheet-handle" onClick={() => setSheet((s) => (s === "peek" ? "half" : s === "half" ? "full" : "peek"))} aria-label={sheet === "full" ? "Shrink panel" : "Expand panel"}>
                 <span />
               </button>
@@ -182,9 +182,10 @@ function Shell() {
             </div>
           )}
 
-          {layout === "narrow" && (
-            <button className="view-toggle btn btn-glass" onClick={() => setSheet((s) => (s === "peek" ? "full" : "peek"))}>
-              {sheet === "peek" ? <><IconList size={16} />List</> : <><IconMap size={16} />Map</>}
+          {/* Only the full sheet hides the map, so only then does it need a way back. Peek and half use the handle. */}
+          {layout === "narrow" && sheet === "full" && (
+            <button className="view-toggle btn btn-glass" onClick={() => setSheet("peek")}>
+              <IconMap size={16} />Map
             </button>
           )}
 

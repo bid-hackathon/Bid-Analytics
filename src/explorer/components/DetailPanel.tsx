@@ -189,7 +189,7 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
           <p className="prose">Reach out to the agency directly about this opportunity.</p>
           <div className="contact-card">
             <p className="contact-name">{agency?.name ?? "Agency unknown"}</p>
-            {agency && <p className="meta-note">{AGENCY_TYPE_LABEL[agency.agencyType]}{agency.jurisdiction ? `, ${agency.jurisdiction}` : ""}</p>}
+            {agency && <p className="meta-note">{agency.jurisdiction?.includes(AGENCY_TYPE_LABEL[agency.agencyType]) ? agency.jurisdiction : `${AGENCY_TYPE_LABEL[agency.agencyType]}${agency.jurisdiction ? `, ${agency.jurisdiction}` : ""}`}</p>}
             <ContactRow icon={<IconGlobe size={16} />} label="Website" value={agency?.websiteUrl ?? null} href={agency?.websiteUrl ?? undefined} />
             <ContactRow icon={<IconMail size={16} />} label="Email" value={agency?.email ?? null} href={agency?.email ? `mailto:${agency.email}` : undefined} />
             <ContactRow icon={<IconPhone size={16} />} label="Phone" value={agency?.phone ?? null} href={agency?.phone ? `tel:${agency.phone.replace(/[^\d+]/g, "")}` : undefined} />

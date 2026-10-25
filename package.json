@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types tests/",
+    "test": "node scripts/run-tests.mjs",
     "build:artifact": "node scripts/build-artifact.mjs"
   },
   "dependencies": {

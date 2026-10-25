@@ -10,7 +10,7 @@ import { IconClose, IconSparkle, IconAlert, IconChevronLeft } from "./Icons";
 
 type Step = "describe" | "interpreting" | "questions" | "review";
 
-const EXAMPLE = "We're a 6-person asphalt crew based in Tacoma. We do pothole patching, small paving jobs, and crack sealing in Pierce and King counties. We don't do concrete work.";
+const EXAMPLE = "We're a 6-person asphalt crew based in Tacoma. We do pothole patching, small paving jobs, and crack sealing in Pierce, King, and Kitsap counties. We don't do concrete work.";
 
 export function Onboarding() {
   const { state, services, actions, dispatch } = useExplorer();

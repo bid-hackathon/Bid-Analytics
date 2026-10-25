@@ -451,6 +451,9 @@ select.input { appearance: auto; }
 .sheet-handle span { width: 38px; height: 5px; border-radius: 3px; background: rgba(235, 235, 245, 0.3); }
 .sheet .results-head { padding-top: 2px; }
 .sheet.is-peek .results-list { overflow: hidden; }
+.sheet.is-full { background: #1c1c1f; }
+.sheet.is-full .results-list { padding-bottom: 72px; }
+.app.sheet-full .map-controls { display: none; }
 .view-toggle { position: absolute; z-index: 16; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
 .layout-narrow .top-right { top: 10px; }
 .layout-narrow .control { width: 38px; height: 38px; }
