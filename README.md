@@ -73,14 +73,15 @@ The registry is in [`data/sources.seed.json`](data/sources.seed.json) and loaded
 
 | Who | Role |
 |---|---|
-| Jon Cochran | Team lead and client: government contracting domain expert |
-| Ashwin Subramanian | Product owner: requirements and the app spec |
-| Dhruv Kurpad | Front end: map and explorer app |
-| Colin C. | Bid finding: agency source registry and data model |
+| Jon Cochran | Client and domain expert: government contracting, business plan |
+| Ashwin Subramanian | Product spec and the map explorer app |
+| Dhruv Kurpad | Backend and integration: repo setup, wiring the map to Supabase |
+| Colin C. | Bid data: the 1,400+ source registry, bid data model, bid puller, product requirements |
 
 ## For developers
 
 - **Front end:** Next.js app in `src/`. Run, test and build instructions, the code layout, and the API it expects are in [`docs/FRONTEND.md`](docs/FRONTEND.md). `NEXT_PUBLIC_DATA_MODE=fixtures` (the default) uses sample data; `live` calls the `/api/v1` backend.
 - **Data:** schema in [`supabase/migrations/`](supabase/migrations/), seed in [`supabase/seed.sql`](supabase/seed.sql), bid fields in [`docs/bid-data-model.md`](docs/bid-data-model.md), registry notes in [`data/README.md`](data/README.md).
+- **Connecting the app to Supabase:** field-by-field mapping from the database to the app in [`docs/supabase-frontend-integration.md`](docs/supabase-frontend-integration.md).
 - **Secrets:** copy `.env.example` to `.env.local` and fill in your own keys. Never commit a real `.env`.
 - **Spec:** [`Washington_Contract_Explorer_SRS.md`](Washington_Contract_Explorer_SRS.md).
