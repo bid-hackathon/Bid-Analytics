@@ -302,7 +302,7 @@ function ProfileForm({ fields, setFields, fromAI, error, saving, editing, onConf
         <legend>Qualifications</legend>
         <p className="field-hint">Answer only what you know. Unknown stays unknown and is never treated as a no.</p>
         <TriField id="pf-reg" label="Washington contractor registration" f={fields.contractorRegistration} onChange={(v) => set("contractorRegistration", v)} />
-        <TriField id="pf-bond" label="Can provide bid and performance bonds" f={fields.bonding} onChange={(v) => set("bonding", v)} />
+        <TriField id="pf-bond" label="Can meet bonding requirements on bids" f={fields.bonding} onChange={(v) => set("bonding", v)} />
         <TriField id="pf-ins" label="Carries general liability insurance" f={fields.insurance} onChange={(v) => set("insurance", v)} />
         <TextField id="pf-licenses" label="Other licenses" f={fields.licenses} value={csv(fields.licenses.value)} onChange={(v) => set("licenses", parseCsv(v))} optional />
         <TextField id="pf-certs" label="Certifications" f={fields.certifications} value={csv(fields.certifications.value)} onChange={(v) => set("certifications", parseCsv(v))} hint="For example DBE or small business certifications" optional />

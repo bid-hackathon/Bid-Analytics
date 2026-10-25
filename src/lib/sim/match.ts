@@ -89,7 +89,7 @@ export function assess(o: Opportunity, p: VendorProfile, _agency: Agency | undef
   // Published mandatory requirements. Unknown is not false.
   const tracked: Record<string, { field: "contractorRegistration" | "bonding" | "insurance"; name: string }> = {
     license: { field: "contractorRegistration", name: "an active Washington contractor registration" },
-    bonding: { field: "bonding", name: "a bid bond" },
+    bonding: { field: "bonding", name: "bonding for the bid" },
     insurance: { field: "insurance", name: "liability insurance" },
   };
   for (const r of o.requirements) {

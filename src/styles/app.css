@@ -476,3 +476,15 @@ select.input { appearance: auto; }
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
   .progress-line span { animation: none; background: var(--tint); opacity: 0.5; }
 }
+
+/* Book a call with Jon (shown for Good fit and Possible fit) */
+.btn-book { background: var(--tint); color: #fff; }
+.btn-book:hover:not(:disabled) { background: #2a93ff; }
+.btn-book:active:not(:disabled) { background: var(--tint-press); }
+.book-card { margin: 12px 16px 4px; padding: 14px; border-radius: var(--r-card); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; background: linear-gradient(180deg, rgba(10, 132, 255, 0.14), rgba(10, 132, 255, 0.06)); border: 0.5px solid rgba(10, 132, 255, 0.35); scroll-margin-top: 12px; }
+.book-icon { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: rgba(10, 132, 255, 0.2); color: var(--tint); }
+.book-body { display: grid; gap: 8px; justify-items: start; min-width: 0; }
+.book-title { margin: 0; font-size: var(--t-body); font-weight: 600; }
+.book-text { margin: 0; color: var(--label-2); font-size: var(--t-sub); }
+.book-note { margin: 0; color: var(--label-3); font-size: var(--t-footnote); }
+.book-card + .detail-section { margin-top: 12px; }

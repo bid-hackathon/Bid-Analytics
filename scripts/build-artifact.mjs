@@ -33,7 +33,7 @@ const result = await build({
   jsx: "automatic",
   write: false,
   loader: { ".jpg": "dataurl" },
-  define: { "process.env.NODE_ENV": '"production"', "process.env.NEXT_PUBLIC_DATA_MODE": '"fixtures"', "process.env.NEXT_PUBLIC_API_BASE_URL": '""' },
+  define: { "process.env.NODE_ENV": '"production"', "process.env.NEXT_PUBLIC_DATA_MODE": '"fixtures"', "process.env.NEXT_PUBLIC_API_BASE_URL": '""', "process.env.NEXT_PUBLIC_BOOKING_URL": JSON.stringify(process.env.NEXT_PUBLIC_BOOKING_URL ?? "") },
   alias: { "@": path.join(root, "src") },
   plugins: [globalsPlugin],
   legalComments: "none",
