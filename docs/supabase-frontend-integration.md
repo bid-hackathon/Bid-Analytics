@@ -59,6 +59,8 @@ Keep everything in `fixtureServices` (auth, profile, matching, saving) and repla
 
 `set_asides` (women-owned, small business and so on) has no matching field in `Opportunity`. Put it in `completeness` or show it in the detail view.
 
+**Location provenance (proposed, needs the data owner's agreement).** `scripts/pull_bids.py` copies `county`, `city`, `lat` and `lng` from the source record, so today they say where the agency is, not where the work happens. Until the collector extracts place of performance, set `resolutionMethod: "agency_record"` on locations built from those values. The Service Area Explorer then keeps them out of reachability counts and lists them as "Work location not confirmed". See `docs/FRONTEND.md` and `src/serviceArea/README.md`.
+
 ## Differences from the PRD
 
 The frontend follows the SRS. The PRD, which wins where they differ, calls for no accounts, coverage of WA, OR and ID, no fit scores or tiers, and a "Get help winning this" phone/email handoff that writes to `leads`. Colin will raise these with you separately. The adapter above works either way.

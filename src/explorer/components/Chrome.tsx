@@ -24,7 +24,7 @@ export function MapControls({ map, legendOpen, onLegend }: { map: React.RefObjec
   );
 }
 
-export function Legend({ personalized, onClose }: { personalized: boolean; onClose(): void }) {
+export function Legend({ personalized, serviceAreaPreview, onClose }: { personalized: boolean; serviceAreaPreview?: boolean; onClose(): void }) {
   return (
     <div className="legend glass-panel" role="region" aria-label="Map legend">
       <div className="legend-head">
@@ -36,7 +36,14 @@ export function Legend({ personalized, onClose }: { personalized: boolean; onClo
         <li><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="9.5" className="lg-halo" /><circle r="6.5" className="lg-exact" /></svg>Approximate: city or county center</li>
         <li><svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true"><circle r="10" className="lg-cluster" /><text textAnchor="middle" dy="0.35em" className="lg-cluster-text">3</text></svg>Group of opportunities. Select to zoom in.</li>
         <li><span className="lg-swatch is-service" aria-hidden="true" />Your service area</li>
-        <li><span className="lg-swatch is-filter" aria-hidden="true" />County filter</li>
+        {serviceAreaPreview ? (
+          <>
+            <li><span className="lg-swatch sa-swatch-added" aria-hidden="true" />Added in preview, not saved</li>
+            <li><span className="lg-swatch sa-swatch-removed" aria-hidden="true" />Removed in preview, not saved</li>
+          </>
+        ) : (
+          <li><span className="lg-swatch is-filter" aria-hidden="true" />County filter</li>
+        )}
       </ul>
       {personalized && (
         <>
@@ -51,6 +58,14 @@ export function Legend({ personalized, onClose }: { personalized: boolean; onClo
     </div>
   );
 }
+
+const FAULT_LABEL: Record<keyof typeof devFaults, string> = {
+  catalog: "Opportunity service fails",
+  interpretation: "Profile reading fails",
+  matching: "Matching fails",
+  profileSave: "Profile saving fails",
+  profileConflict: "Profile saving reports a revision conflict",
+};
 
 const MODE_LABEL: Record<CapabilityMode, string> = {
   live: "Connected",
@@ -152,10 +167,10 @@ export function CoverageSheet() {
             <>
               <h3 className="section-title">Test failure states</h3>
               <p className="meta-note">Development only. These switches make the simulated services fail so error and retry states can be checked.</p>
-              {(["catalog", "interpretation", "matching"] as const).map((k) => (
+              {(["catalog", "interpretation", "matching", "profileSave", "profileConflict"] as const).map((k) => (
                 <label key={k} className="check-row" htmlFor={`fault-${k}`}>
                   <input id={`fault-${k}`} type="checkbox" checked={devFaults[k]} onChange={(e) => { devFaults[k] = e.target.checked; force((x) => x + 1); if (k === "catalog") actions.retryCatalog(); if (k === "matching") actions.retryMatching(); }} />
-                  <span className="check-label">{k === "catalog" ? "Opportunity service fails" : k === "interpretation" ? "Profile reading fails" : "Matching fails"}</span>
+                  <span className="check-label">{FAULT_LABEL[k]}</span>
                 </label>
               ))}
             </>

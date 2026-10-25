@@ -22,7 +22,12 @@ export interface MapPoint {
   title: string;
   /** undefined before personalization; null while unassessed. */
   tier?: FitTier | null;
+  /** Service area preview: reachable only with the draft area, or no longer reachable with it. */
+  preview?: "added" | "removed";
 }
+
+/** County roles while previewing a service area change; keyed by county name. */
+export type ServiceAreaPreview = Readonly<Record<string, "current" | "kept" | "added" | "removed">>;
 
 export interface MapInsets {
   top: number;
@@ -45,6 +50,8 @@ interface Props {
   hoveredId: string | null;
   serviceCounties: string[];
   filterCounties: string[];
+  /** When set, replaces the service-area styling with the preview's county roles. */
+  serviceAreaPreview?: ServiceAreaPreview | null;
   personalized: boolean;
   insets: MapInsets;
   showMarkers: boolean;
@@ -176,6 +183,13 @@ export const MapView = memo(
     const labelPlaces = WA_PLACES.filter((p) => p.rank <= (t.k < 0.45 ? 1 : t.k < 0.9 ? 2 : 3));
     const serviceSet = new Set(serviceCounties);
     const filterSet = new Set(filterCounties);
+    const preview = props.serviceAreaPreview ?? null;
+    const countyClass = (name: string) => {
+      const role = preview?.[name];
+      const service = preview ? role === "current" || role === "kept" : serviceSet.has(name);
+      return `map-county${service ? " is-service" : ""}${role === "added" ? " is-sa-added" : ""}${role === "removed" ? " is-sa-removed" : ""}${filterSet.has(name) ? " is-filter" : ""}`;
+    };
+    const strongLabel = (name: string) => filterSet.has(name) || preview?.[name] === "added" || preview?.[name] === "removed";
 
     return (
       <svg ref={svgRef} className="map-svg" role="application" aria-label="Map of Washington opportunities. Drag to pan, scroll or pinch to zoom.">
@@ -202,7 +216,7 @@ export const MapView = memo(
             <path
               key={c.name}
               d={c.d}
-              className={`map-county${serviceSet.has(c.name) ? " is-service" : ""}${filterSet.has(c.name) ? " is-filter" : ""}${hoverCounty === c.name ? " is-hover" : ""}`}
+              className={`${countyClass(c.name)}${hoverCounty === c.name ? " is-hover" : ""}`}
               onPointerEnter={() => setHoverCounty(c.name)}
               onPointerLeave={() => setHoverCounty((h) => (h === c.name ? null : h))}
               onClick={() => cb.current.onCountyClick(c.name)}
@@ -213,7 +227,7 @@ export const MapView = memo(
 
         <g className="map-labels" aria-hidden="true">
           {t.k >= 0.55 && COUNTY_SHAPES.map((c) => (
-            <text key={c.name} x={t.applyX(c.label[0])} y={t.applyY(c.label[1])} className={`map-county-label${filterSet.has(c.name) || hoverCounty === c.name ? " is-strong" : ""}`}>{c.name}</text>
+            <text key={c.name} x={t.applyX(c.label[0])} y={t.applyY(c.label[1])} className={`map-county-label${strongLabel(c.name) || hoverCounty === c.name ? " is-strong" : ""}`}>{c.name}</text>
           ))}
           {labelPlaces.map((p) => {
             const [wx, wy] = project(p.lngLat);
@@ -304,13 +318,14 @@ function PointMarker({ p, dx, dy, personalized, selected, hovered, onSelect, onH
   const r = personalized ? 10 : 7;
   const precisionText = d.approximate ? "approximate location" : "mapped work site";
   const tierText = personalized ? (d.tier ? `, ${d.tier.replace(/_/g, " ")}` : ", not assessed") : "";
+  const previewText = d.preview === "added" ? ", newly reachable in the service area preview" : d.preview === "removed" ? ", no longer reachable in the service area preview" : "";
   return (
     <g
       transform={`translate(${p.x + dx},${p.y + dy})`}
-      className={`marker ${tierClass}${d.approximate ? " is-approx" : ""}${selected ? " is-selected" : ""}${hovered ? " is-hovered" : ""}`}
+      className={`marker ${tierClass}${d.approximate ? " is-approx" : ""}${selected ? " is-selected" : ""}${hovered ? " is-hovered" : ""}${d.preview ? ` is-sa-${d.preview}` : ""}`}
       role="button"
       tabIndex={0}
-      aria-label={`${d.title}, ${precisionText}${tierText}`}
+      aria-label={`${d.title}, ${precisionText}${tierText}${previewText}`}
       aria-pressed={selected}
       onClick={(e) => { e.stopPropagation(); onSelect(d.oppId); }}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(d.oppId); } }}

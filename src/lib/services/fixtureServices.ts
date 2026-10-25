@@ -7,7 +7,7 @@ import { FIXTURE_OPPORTUNITIES, FIXTURE_SNAPSHOT_AT } from "@/fixtures/dev/oppor
 import { ExplorerServices, ServiceError } from "./types";
 
 /** Toggles for exercising failure states from the Data and coverage sheet. */
-export const devFaults = { catalog: false, interpretation: false, matching: false };
+export const devFaults = { catalog: false, interpretation: false, matching: false, profileSave: false, profileConflict: false };
 
 const wait = (ms: number, signal?: AbortSignal) =>
   new Promise<void>((resolve, reject) => {
@@ -142,7 +142,8 @@ export function createFixtureServices(): ExplorerServices {
         const { user } = requireSession();
         await wait(250);
         const prev = profiles.get(user.id);
-        if ((prev?.revision ?? null) !== expectedRevision) throw new ServiceError({ code: "revision_conflict", message: "Your profile changed in another tab. Reload it and try again.", retryable: false });
+        if (devFaults.profileSave) throw new ServiceError({ code: "internal_error", message: "The profile service didn't respond.", retryable: true });
+        if (devFaults.profileConflict || (prev?.revision ?? null) !== expectedRevision) throw new ServiceError({ code: "revision_conflict", message: "Your profile changed in another tab. Reload it and try again.", retryable: false });
         const confirmed = Object.fromEntries(
           Object.entries(fields).map(([k, f]) => [k, { value: f.value, provenance: f.value == null ? "unknown" : "confirmed" }]),
         ) as unknown as VendorProfileFields;

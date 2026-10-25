@@ -40,7 +40,7 @@ const result = await build({
 });
 
 const js = result.outputFiles[0].text.replace(/<\/script/gi, "<\\/script");
-const css = readFileSync(path.join(root, "src/styles/app.css"), "utf8");
+const css = ["app.css", "service-area.css"].map((f) => readFileSync(path.join(root, "src/styles", f), "utf8")).join("\n");
 const html = `<title>Bid Analytics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

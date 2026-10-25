@@ -120,6 +120,8 @@ export function reducer(s: ExplorerState, a: Action): ExplorerState {
     case "detail/failed":
       return a.id === s.selectedId ? { ...s, detail: { ...s.detail, status: "error", error: a.error } } : s;
     case "profile/set":
+      // REC-07: a slower save of an older revision never replaces a newer confirmed profile.
+      if (a.profile && s.profile && a.profile.id === s.profile.id && a.profile.revision < s.profile.revision) return s;
       return {
         ...s,
         profile: a.profile,

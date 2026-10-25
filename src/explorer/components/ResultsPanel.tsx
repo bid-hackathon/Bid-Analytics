@@ -8,7 +8,7 @@ import { hasMapPoint } from "@/lib/catalogQuery";
 import { selectResults, useExplorer } from "../store";
 import { FilterBar } from "./Filters";
 import { FitState } from "./Fit";
-import { IconBookmark, IconEdit, IconSearch, IconSparkle, IconClose, IconAlert } from "./Icons";
+import { IconBookmark, IconEdit, IconSearch, IconSparkle, IconClose, IconAlert, IconChevronRight, IconMap } from "./Icons";
 
 export function locationLine(o: Opportunity): string {
   if (o.locations.length > 1) {
@@ -24,7 +24,7 @@ export function locationLine(o: Opportunity): string {
   return l.cityName ? `${l.label.split(",")[0]}, ${l.cityName}` : `${l.label.split(",")[0]}, ${l.countyNames[0]} County`;
 }
 
-export function ResultsPanel({ onSelect }: { onSelect(id: string): void }) {
+export function ResultsPanel({ onSelect, onExploreServiceArea }: { onSelect(id: string): void; onExploreServiceArea?: () => void }) {
   const { state, actions, dispatch, services } = useExplorer();
   const { all, shown, mapped, unmapped, personalized } = selectResults(state);
   const [query, setQuery] = useState(state.filter.query);
@@ -64,7 +64,7 @@ export function ResultsPanel({ onSelect }: { onSelect(id: string): void }) {
           )}
         </div>
 
-        <ProfileStrip />
+        <ProfileStrip onExploreServiceArea={onExploreServiceArea} />
         <FilterBar />
 
         <div className="results-meta" aria-live="polite">
@@ -163,7 +163,7 @@ const defaultFilterShape = {
   includeUnknownDates: true, includeStatewide: true, includeUnknownLocations: true, viewportBounds: null, fitTiers: [], sort: null,
 };
 
-function ProfileStrip() {
+function ProfileStrip({ onExploreServiceArea }: { onExploreServiceArea?: () => void }) {
   const { state, dispatch } = useExplorer();
   const p = state.profile;
   if (!p)
@@ -196,6 +196,14 @@ function ProfileStrip() {
         <IconEdit size={15} />
         Edit profile
       </button>
+      {onExploreServiceArea && (
+        <button className="sa-entry" onClick={onExploreServiceArea}>
+          <IconMap size={16} />
+          <span className="sa-entry-label">Explore service area</span>
+          <span className="sa-entry-hint">Preview other counties</span>
+          <IconChevronRight size={16} />
+        </button>
+      )}
     </div>
   );
 }
