@@ -32,6 +32,22 @@ Bid Analytics does the digging so they don't have to.
 
 Nothing to install and nothing to pay. In this demo the listings are labeled sample data, and your account and profile reset when you reload the page.
 
+## How it works
+
+Three diagrams show what the product does and how. All eight system flows, with editable Excalidraw sources, are in [`docs/diagrams/`](docs/diagrams/). Dashed boxes are planned work. A "simulated" tag marks a labeled stand-in, and a "not deployed" tag marks code that is in this repo but isn't live yet.
+
+**Before and after.** A small crew today checks agency sites one at a time. With Bid Analytics, a confirmed business profile and a registry of agency bid sources meet on one map, and every bid carries a fit label with the reasons behind it.
+
+![Before and after: a small paving crew without and with Bid Analytics](docs/diagrams/01-before-after.png)
+
+**Where the bids come from.** The source registry is built ahead of time from the agency spreadsheet and the Oregon and Idaho lists, then geocoded and audited. `pull_bids.py` routes each source to a CivicPlus, OpenGov or OregonBuys reader, normalizes and dedupes what it finds, and upserts it to Supabase. The `open_bids` view only shows bids that are still open.
+
+![Data pipeline from agency lists to open bids](docs/diagrams/03-data-pipeline.png)
+
+**How a bid gets its label.** A plain-language description becomes a draft profile. Credentials are never guessed, and the profile becomes a numbered revision once the vendor confirms it. The matching service runs four rule checks plus embedding similarity on each open bid. Rules decide the label, similarity only orders and demotes, and a stale revision is refused with a 409.
+
+![Profile interpretation and matching](docs/diagrams/04-matching.png)
+
 ## Where the bids come from
 
 Most local work never reaches the big state portals. It's posted on a city's purchasing page, a school district's bid board or a utility's vendor portal. We built a registry of those places:

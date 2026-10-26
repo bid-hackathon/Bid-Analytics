@@ -9,6 +9,7 @@ Start with the [project README](../README.md) for what Bid Analytics does and ho
 | [`../src/serviceArea/README.md`](../src/serviceArea/README.md) | Service Area Explorer: previewing county changes, how it uses the store and map, and the location-provenance requirement for collected bids | Product and front end |
 | [`supabase-frontend-integration.md`](supabase-frontend-integration.md) | Field-by-field mapping from the Supabase tables to the app's types | Data integration |
 | [`bid-data-model.md`](bid-data-model.md) | The `sources`, `bids` and `leads` tables and every bid field | Bid finding |
+| [`diagrams/`](diagrams/) | Eight hand-drawn system flows (PNG and editable Excalidraw) | All |
 | [`../data/README.md`](../data/README.md) | The 1,450+ source state and local agency registry and how to rebuild and load it | Bid finding |
 | [`../Washington_Contract_Explorer_SRS.md`](../Washington_Contract_Explorer_SRS.md) | Full software requirements spec for the explorer | Product |
 | [`demo-video-script.md`](demo-video-script.md) | Script for the demo video | Team |
