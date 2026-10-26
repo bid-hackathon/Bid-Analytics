@@ -6,6 +6,7 @@ Start with the [project README](../README.md) for what Bid Analytics does and ho
 |---|---|---|
 | [`system-design.md`](system-design.md) | System design diagram (Mermaid): components, data flow, what's live vs sample vs planned | All |
 | [`FRONTEND.md`](FRONTEND.md) | Running, testing and building the map explorer; code layout; the `/api/v1` routes it expects | Product and front end |
+| [`../src/serviceArea/README.md`](../src/serviceArea/README.md) | Service Area Explorer: previewing county changes, how it uses the store and map, and the location-provenance requirement for collected bids | Product and front end |
 | [`supabase-frontend-integration.md`](supabase-frontend-integration.md) | Field-by-field mapping from the Supabase tables to the app's types | Data integration |
 | [`bid-data-model.md`](bid-data-model.md) | The `sources`, `bids` and `leads` tables and every bid field | Bid finding |
 | [`../data/README.md`](../data/README.md) | The 1,450+ source state and local agency registry and how to rebuild and load it | Bid finding |

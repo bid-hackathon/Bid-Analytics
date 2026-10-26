@@ -13,7 +13,12 @@ import {
   IconBookmark, IconBuilding, IconCalendar, IconChevronLeft, IconClose, IconCopy, IconDoc, IconExternal, IconGlobe, IconMail, IconPhone, IconPin, IconAlert, IconCheck,
 } from "./Icons";
 
-export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?: boolean }) {
+export function DetailPanel({ onClose, showBack, previewReachable }: {
+  onClose(): void;
+  showBack?: boolean;
+  /** Reachable only in an unsaved service area preview: the confirmed revision's fit doesn't apply. */
+  previewReachable?: boolean;
+}) {
   const { state, actions, services, dispatch } = useExplorer();
   const id = state.selectedId!;
   const listItem = state.catalog.data.find((o) => o.id === id) ?? null;
@@ -47,7 +52,8 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
     );
   }
 
-  const assessment = state.profile && state.matching.forRevision === state.profile.revision ? state.matching.byId[o.id] : undefined;
+  // A preview-only reachable job keeps no label from the confirmed area (often Not a fit for being outside it).
+  const assessment = !previewReachable && state.profile && state.matching.forRevision === state.profile.revision ? state.matching.byId[o.id] : undefined;
   const saved = state.saved.includes(o.id);
   const dl = deadlineLabel(o.deadline);
   const originalUrl = o.sourceReferences.find((r) => r.url)?.url ?? null;
@@ -74,7 +80,11 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
           <div className="detail-status">
             <span className={`status-pill is-${o.status}`}>{o.status === "open" ? "Open" : o.status[0].toUpperCase() + o.status.slice(1)}</span>
             <span className={`detail-deadline${dl.urgent ? " is-urgent" : ""}`}>{dl.text}</span>
-            <FitState assessment={assessment} personalized={!!assessment} pending={!!state.profile && state.matching.status === "pending"} failed={!!state.profile && state.matching.status === "error"} />
+            {previewReachable ? (
+              <span className="fit-badge is-pending">Not assessed for this preview</span>
+            ) : (
+              <FitState assessment={assessment} personalized={!!assessment} pending={!!state.profile && state.matching.status === "pending"} failed={!!state.profile && state.matching.status === "error"} />
+            )}
           </div>
           <div className="detail-actions">
             {canBook && <BookCallButton onClick={() => bookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })} />}
@@ -93,7 +103,11 @@ export function DetailPanel({ onClose, showBack }: { onClose(): void; showBack?:
           {!originalUrl && <p className="detail-note">{o.isDevelopmentFixture ? "Sample listings have no original posting to open." : "The source link for this listing isn't available."}</p>}
         </header>
 
-        {assessment?.tier ? (
+        {previewReachable ? (
+          <section className="detail-section personalize-inline">
+            <p>Your service area preview reaches this work. Fit so far was judged for your confirmed area (profile revision {state.profile?.revision}), which doesn’t include it. Apply the preview to have it assessed for the new area.</p>
+          </section>
+        ) : assessment?.tier ? (
           <>
             <FitExplanation a={assessment} simulated={simulatedFit} />
             {canBook && <BookCallCard ref={bookRef} o={o} tierLabel={fitLabel(assessment.tier)} />}

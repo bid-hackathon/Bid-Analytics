@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "@/styles/app.css";
+import "@/styles/service-area.css";
 
 export const metadata: Metadata = {
   title: "Bid Analytics · Washington Contract Explorer",
