@@ -1,10 +1,37 @@
-import type { CatalogFilter, Session, VendorProfile, VendorProfileFields } from "../contracts";
+import type { Agency, CatalogFilter, Opportunity, Session, VendorProfile, VendorProfileFields } from "../contracts";
 import { queryCatalog, isOpenForDiscovery, hasMapPoint } from "../catalogQuery";
 import { interpretDescription } from "../sim/interpret";
 import { assess, SIM_RANKING_VERSION } from "../sim/match";
 import { FIXTURE_AGENCIES } from "@/fixtures/dev/agencies";
 import { FIXTURE_OPPORTUNITIES, FIXTURE_SNAPSHOT_AT } from "@/fixtures/dev/opportunities";
-import { ExplorerServices, ServiceError } from "./types";
+import { CapabilityMode, ExplorerServices, ServiceError } from "./types";
+
+/** A whole catalog loaded at once and queried client-side with queryCatalog. */
+export interface CatalogSnapshot {
+  opportunities: Opportunity[];
+  agencies: Agency[];
+  snapshotAt: string;
+  catalogVersion: string;
+  lastSuccessfulCheckAt: string | null;
+  limitations: string[];
+}
+
+export interface CatalogSource {
+  mode: CapabilityMode;
+  load(): Promise<CatalogSnapshot>;
+}
+
+const FIXTURE_SOURCE: CatalogSource = {
+  mode: "fixture",
+  load: async () => ({
+    opportunities: FIXTURE_OPPORTUNITIES,
+    agencies: FIXTURE_AGENCIES,
+    snapshotAt: FIXTURE_SNAPSHOT_AT,
+    catalogVersion: "dev-fixtures-2026-10-25",
+    lastSuccessfulCheckAt: null,
+    limitations: ["Development fixtures. These are sample listings, not real open solicitations."],
+  }),
+};
 
 /** Toggles for exercising failure states from the Data and coverage sheet. */
 export const devFaults = { catalog: false, interpretation: false, matching: false, profileSave: false, profileConflict: false };
@@ -34,7 +61,16 @@ async function sha256(text: string) {
  * and nothing persists past a reload. Its `integration` block is shown in the UI
  * so simulated behavior is never mistaken for a connected service.
  */
-export function createFixtureServices(): ExplorerServices {
+export function createFixtureServices(source: CatalogSource = FIXTURE_SOURCE): ExplorerServices {
+  let pending: Promise<CatalogSnapshot> | null = null;
+  const snapshot = () => {
+    // Retry after a failed load instead of caching the failure.
+    pending ??= source.load().catch((e) => {
+      pending = null;
+      throw e;
+    });
+    return pending;
+  };
   const users = new Map<string, { id: string; hash: string }>();
   let session: Session | null = null;
   const profiles = new Map<string, VendorProfile>();
@@ -45,7 +81,7 @@ export function createFixtureServices(): ExplorerServices {
   };
 
   return {
-    integration: { catalog: "fixture", interpretation: "simulated", matching: "simulated", auth: "session_only", saving: "session_only" },
+    integration: { catalog: source.mode, interpretation: "simulated", matching: "simulated", auth: "session_only", saving: "session_only" },
     auth: {
       async getSession() {
         return session;
@@ -79,52 +115,56 @@ export function createFixtureServices(): ExplorerServices {
         requireSession();
         await wait(180, signal);
         if (devFaults.catalog) throw new ServiceError({ code: "source_unavailable", message: "The opportunity service didn't respond.", retryable: true });
-        const r = queryCatalog(FIXTURE_OPPORTUNITIES, FIXTURE_AGENCIES, filter);
+        const c = await snapshot();
+        const r = queryCatalog(c.opportunities, c.agencies, filter);
         return {
           data: r.data,
-          agencies: FIXTURE_AGENCIES,
+          agencies: c.agencies,
           facets: r.facets,
           meta: {
             schemaVersion: "1.0",
-            catalogVersion: "dev-fixtures-2026-10-25",
+            catalogVersion: c.catalogVersion,
             generatedAt: new Date().toISOString(),
-            sourceSnapshotAt: FIXTURE_SNAPSHOT_AT,
+            sourceSnapshotAt: c.snapshotAt,
             isStale: false,
             totalFiltered: r.totalFiltered,
             mappedCount: r.mappedCount,
             unmappedCount: r.unmappedCount,
-            limitations: ["Development fixtures. These are sample listings, not real open solicitations."],
+            limitations: c.limitations,
           },
         };
       },
       async getOpportunity(id, signal) {
         requireSession();
         await wait(60, signal);
-        const opportunity = FIXTURE_OPPORTUNITIES.find((o) => o.id === id);
+        const c = await snapshot();
+        const opportunity = c.opportunities.find((o) => o.id === id);
         if (!opportunity) throw new ServiceError({ code: "not_found", message: "This opportunity is no longer in the catalog.", retryable: false });
-        return { opportunity, agency: FIXTURE_AGENCIES.find((a) => a.id === opportunity.agencyId) ?? null };
+        return { opportunity, agency: c.agencies.find((a) => a.id === opportunity.agencyId) ?? null };
       },
       async getCoverage() {
-        const open = FIXTURE_OPPORTUNITIES.filter((o) => isOpenForDiscovery(o));
+        const c = await snapshot();
+        const open = c.opportunities.filter((o) => isOpenForDiscovery(o));
+        const fixtures = source.mode === "fixture";
         const count = (k: string) => open.filter((o) => o.locationStatus === k).length;
         return {
           agenciesInInventory: null,
-          agenciesChecked: 0,
-          agenciesWithOpenWork: 0,
-          uniqueOpenOpportunities: 0,
+          agenciesChecked: fixtures ? 0 : null,
+          agenciesWithOpenWork: fixtures ? 0 : new Set(open.map((o) => o.agencyId)).size,
+          uniqueOpenOpportunities: fixtures ? 0 : open.length,
           locationBreakdown: {
             located: open.filter((o) => hasMapPoint(o) && o.locationStatus !== "approximate").length,
             approximate: count("approximate"),
             statewide: count("statewide") + count("remote"),
             unknown: count("unknown"),
           },
-          lastSuccessfulCheckAt: null,
-          catalogVersion: "dev-fixtures-2026-10-25",
+          lastSuccessfulCheckAt: c.lastSuccessfulCheckAt,
+          catalogVersion: c.catalogVersion,
           isStale: false,
-          limitations: [
+          limitations: fixtures ? [
             "No real sources are connected yet. Workstream C's collected catalog will replace these fixtures.",
             `${open.length} open sample listings across ${new Set(open.map((o) => o.agencyId)).size} agencies are loaded for development only.`,
-          ],
+          ] : c.limitations,
         };
       },
     },
@@ -158,8 +198,9 @@ export function createFixtureServices(): ExplorerServices {
         // Variable latency so out-of-order responses can happen, as they can live.
         await wait(700 + ((profile.revision * 397) % 900), signal);
         if (devFaults.matching) throw new ServiceError({ code: "ai_unavailable", message: "Matching is unavailable right now.", retryable: true });
-        const { data } = queryCatalog(FIXTURE_OPPORTUNITIES, FIXTURE_AGENCIES, { ...filter, viewportBounds: null });
-        const assessments = data.map((o) => assess(o, profile, FIXTURE_AGENCIES.find((a) => a.id === o.agencyId)));
+        const c = await snapshot();
+        const { data } = queryCatalog(c.opportunities, c.agencies, { ...filter, viewportBounds: null });
+        const assessments = data.map((o) => assess(o, profile, c.agencies.find((a) => a.id === o.agencyId)));
         return {
           data: assessments,
           meta: { profileRevision: profile.revision, rankingVersion: SIM_RANKING_VERSION, assessedCount: assessments.length, unassessedCount: 0, assessmentState: "complete", mode: "simulated" },

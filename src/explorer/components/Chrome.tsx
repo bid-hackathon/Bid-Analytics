@@ -54,7 +54,12 @@ export function Legend({ personalized, serviceAreaPreview, onClose }: { personal
           </ul>
         </>
       )}
-      <p className="legend-foot">Pins show where the work happens, not agency offices. Statewide and unstated locations are listed under Not on map.</p>
+      <p className="legend-foot">
+        {process.env.NEXT_PUBLIC_DATA_MODE === "hybrid"
+          ? "Pins show each issuing agency's location; the work site isn't confirmed yet."
+          : "Pins show where the work happens, not agency offices."}{" "}
+        Statewide and unstated locations are listed under Not on map.
+      </p>
     </div>
   );
 }
